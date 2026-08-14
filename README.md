@@ -2,7 +2,8 @@
 
 *Eine triviale Komödie für ernsthafte Leute — with apologies to Oscar Wilde.*
 
-A small library of browser games about the legal profession, played with twenty-sided dice.
+A small library of browser games about the legal profession, played with twenty-sided dice. 
+A loving tribute to tabletop games of my past and hours spent at a kitchen table rolling dice. 
 One arbitration, told three times over — from counsel's lectern, from the expert's chair, and
 from the war room three floors below. One law firm, from the partners' floor down to the
 secretariat that actually runs it. One in-house legal department at quarter's end.
@@ -82,9 +83,7 @@ Any static host works the same way — the files have no requirements at all.
   and the stubborn insistence on professional realism: human, throughout.
 - **The subtitle** is borrowed from Oscar Wilde's *The Importance of Being Earnest*
   ("A Trivial Comedy for Serious People"), which is in the public domain. The apology stands.
-- **Rights:** © 2026, all rights reserved. *(Placeholder — choose your own license before
-  publishing; a permissive one like CC BY-NC 4.0 would suit a gift library, but that is a
-  decision, not a default.)*
+- **Rights:** As an AI work, I keep no rights in it and no right asserted. 
 
 ---
 
