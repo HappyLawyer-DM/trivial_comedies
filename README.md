@@ -30,14 +30,6 @@ Each game: pick a class, keep three status bars alive, roll a d20 against the da
 Every ending is a warm one — even running out of energy just means somebody catches you.
 That is not a bug. That is the thesis.
 
-### Unlisted companion pieces
-
-The repository may also contain a few volumes that are not on the shelf — companion pieces
-for other professions, gifted privately and reachable only by direct link: *Rounds* (a hospital
-week, EN), *Night Shift* (a fantasy infirmary, EN), *Nachtdienst* (eine Nacht als Dienstarzt
-in einem deutschen Krankenhaus, DE) and the original guild edition of *Equity*. If you found
-one of these, someone wanted you to.
-
 ---
 
 ## How it works
@@ -46,7 +38,7 @@ one of these, someone wanted you to.
   scenes and cover painting (Base64-embedded) in a single document. No frameworks, no build
   step, no external requests, no cookies, no tracking, no server logic.
 - **The engine** is ~200 lines of vanilla JavaScript per game: scene graph, class bonuses,
-  d20 checks against difficulty classes, three status meters, flag-based endings.
+  d20 checks against difficulty classes,  status meters, flag-based endings.
 - **`index.html`** is the landing page ("the shelf"). It is fully static and works even in
   viewers without JavaScript.
 - **Note for local viewing on phones:** file previews (e.g. tapping an attachment on iOS)
