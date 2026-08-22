@@ -99,11 +99,11 @@ function pubScene(yr,next){const st=Math.min(S.flags.pub,4),P=PUBS[st];sec(`YEAR
  {label:`B — DECLINE\nThe billables disagree with the byline.`,out:{text:'The opportunity does not vanish. It waits, at exactly this level, for whoever has time. Possibly next year\'s you.',d:{}},next}])}
 const SCENES={
  pub1(){pubScene('I','y1boss1')},
- pub2(){pubScene('II','y2boss')},
- pub3(){pubScene('III','y3boss')},
+ pub2(){pubScene('II','arbMemorial')},
+ pub3(){pubScene('III','arbProduction')},
  pub4(){pubScene('IV','y4assoc')},
  pub5(){pubScene('V','y5boss')},
- pub6(){pubScene('VI','y6boss')},
+ pub6(){pubScene('VI','aiFiling')},
  classSelect(){sec('SESSION ZERO · COUNSEL APPEARANCE');narr('WELCOME TO WYRM & GRIMOIRE LLP');tx(`September. Monday. 08:47.
 
 You have a new laptop, a security pass that occasionally works, and a website bio containing the phrase “experience in complex international disputes.”
@@ -149,6 +149,319 @@ You have been employed for 47 minutes. Choose your archetype.`);app.insertAdjace
  train4(){trainingScene('IV',`The catalogue is familiar now. So is the difficulty of finding two consecutive free days. The slot is yours regardless.`,'review4')},
  train5(){trainingScene('V',`You are senior enough that half the courses expect you to teach. You may still take one for yourself.`,'review5')},
  train6(){trainingScene('VI',`The last slot before the partnership year. Choose what the business case still lacks.`,'review6')},
+
+
+ arbPosterEmail(){sec(`YEAR I · ARBITRATION LIFE`);narr(`EMAILS, URGENT AND OTHERWISE`);tx(`Monday, 08:07.
+
+You open the laptop.
+
+There are 63 new emails.
+
+Eleven are marked URGENT.
+Four say “quick question”.
+Two contain the phrase “before the client call”.
+One was sent at 03:14 by co-counsel in New York and begins:
+
+“Sorry to send this late.”
+
+It was not late in New York.
+
+Your coffee is hot. This is temporary.`);choices([
+ {label:`A — TRIAGE BY CONSEQUENCE
+Deadline first, client second, co-counsel third. Everything else may continue existing without you for twenty minutes.`,tag:'JUDGMENT',dc:11,mod:S.attrs.judgment,success:{text:`At 08:36 the real emergency is handled. The other 62 emails remain emails rather than becoming problems. A strong start to a weak inbox.`,d:{xp:2,rep:1}},fail:{text:`You triage correctly except for the email titled “FYI”. It contains tomorrow’s filing deadline in the third paragraph. “FYI” has betrayed you.`,d:{energy:-1}},next:'arbHotel'},
+ {label:`B — ANSWER IN ORDER
+Inbox zero is a system.`,tag:'GRIT',dc:13,mod:S.attrs.grit,success:{text:`At 09:12 you have replied to everything. You have also done nothing else. The inbox is empty and the day is now full.`,d:{xp:2,energy:-1}},fail:{text:`At 09:12 you are still drafting a careful response to email 17. Email 51 has become a phone call.`,d:{energy:-2}},next:'arbHotel'}])},
+
+ arbHotel(){sec(`YEAR I · TRAVEL`);narr(`THE BEAUTIFUL HOTEL`);tx(`Tuesday, 23:48.
+
+The hearing is in a five-star hotel.
+
+Marble lobby. Fresh flowers. Quiet bar. A pianist playing something tasteful.
+
+In your room:
+
+three hearing bundles,
+two witness folders,
+one suitcase still unopened,
+and a printer the hotel swears “usually works”.
+
+The client messages: “Hope you get some rest before tomorrow.”
+
+You look at the witness outline.
+
+Rest is currently listed under “other”.`);choices([
+ {label:`A — ONE HOUR MORE, THEN STOP
+Fix the weak cross point and go to bed.`,tag:'JUDGMENT',dc:12,mod:S.attrs.judgment,success:{text:`At 00:51 the outline is better and the laptop closes. You get five hours of sleep, which during hearing week qualifies as wellness.`,d:{xp:2,energy:1}},fail:{text:`One hour becomes three because Exhibit C-417 refuses to be the document everyone remembered. The hotel is still beautiful at 03:09. You are not.`,d:{energy:-2}},next:'arbConference'},
+ {label:`B — KEEP GOING
+Hotels are for hearings. Sleep is for after the award.`,tag:'GRIT',dc:15,mod:S.attrs.grit,success:{text:`At 02:14 you solve the point and find the right exhibit. At 08:30 the cross is excellent. At 11:30 you cannot remember the name of the hotel.`,d:{xp:3,rep:1,energy:-2}},fail:{text:`At 03:37 you improve the outline by making it longer. In the morning you delete most of what night-you added.`,d:{energy:-3}},next:'arbConference'}])},
+
+ arbConference(){sec(`YEAR I · NETWORKING`);narr(`THE CONFERENCE`);tx(`Thursday.
+
+The arbitration conference begins at 18:00.
+
+Everyone has a name badge.
+Everyone appears to know everyone.
+At least three people are “delighted to reconnect”.
+
+At 17:41 opposing counsel sends a 146-page submission.
+
+Your team in Europe wants comments tonight.
+The conference is in Singapore.
+Your body thinks it is 11:00.
+
+Networking is part of the job.
+
+So is the part of the job waiting in your inbox.`);choices([
+ {label:`A — GO FOR 90 MINUTES, WITH A PLAN
+Two conversations. One panel. Back to the submission.`,tag:'DRIVE',dc:13,mod:S.attrs.drive,success:{text:`You meet exactly the two people you wanted to meet and are back at the desk by 20:15. At 23:40 you have the five points that matter in the new submission. Networking and work survive the same evening. Nobody should make this a lifestyle.`,d:{xp:3,profile:1,rep:1,energy:-1}},fail:{text:`Ninety minutes becomes a reception, then dinner, then “one last drink”. At 00:18 you open page 1 of 146. Time zones have stopped being geography and become a personal grievance.`,d:{energy:-2}},next:'arbMemorial'},
+ {label:`B — SKIP IT AND READ THE SUBMISSION
+The conference will happen again. This deadline will not.`,tag:'CRAFT',dc:12,mod:S.attrs.craft,success:{text:`By 21:30 you know the five points that matter. One is on page 137. Naturally.`,d:{xp:2,client:1}},fail:{text:`You read all 146 pages linearly and finish knowing a great deal, except what matters most.`,d:{energy:-2}},next:'arbMemorial'}])},
+
+ arbMemorial(){sec(`YEAR II · WRITING`);narr(`THE MEMORIAL`);tx(`Wednesday, 22:06.
+
+The draft Memorial is 212 pages.
+
+There are 486 footnotes.
+The definition section has acquired its own table of contents.
+Track Changes has stopped looking like editing and started looking like weather.
+
+The partner reads page 3 and says:
+
+“The argument is on page 47.”
+
+Pause.
+
+“Why?”`);choices([
+ {label:`A — CUT TO THE CASE
+Theme, rule, evidence, answer. Everything else must justify its continued employment.`,tag:'CRAFT',dc:14,mod:S.attrs.craft+(S.skills['Drafting']||0),success:{text:`By 01:10 the chapter is eleven pages shorter and considerably stronger. The deleted prose watches silently from version history.`,d:{xp:4,rep:2,energy:-1}},fail:{text:`You cut words instead of thought. The chapter is shorter but now reads like 41 pages trying to escape through 19.`,d:{energy:-1}},next:'arbRecord'},
+ {label:`B — DEFEND THE DETAIL
+Complex cases require complex writing.`,tag:'PRESENCE',dc:15,mod:S.attrs.presence,success:{text:`You justify almost every section. The partner keeps most of it and removes six adjectives on principle.`,d:{xp:3,rep:1}},fail:{text:`At page six the partner says: “You are arguing for your draft, not for the case.” The remaining pages lose confidence.`,d:{rep:-1}},next:'arbRecord'}])},
+
+ arbProduction(){sec(`YEAR III · DISCLOSURE`);narr(`DOCUMENT PRODUCTION`);tx(`Friday, 19:22.
+
+The other side requests:
+
+“all documents relating to the negotiations.”
+
+Someone clicks Search.
+
+38,412 hits.
+
+About 31,000 appear to be emails saying “Thanks”.
+
+The review platform has six columns, four status codes, three privilege tags and one spinning loading icon that has become part of the team.
+
+The client asks whether “all documents” really means all documents.
+
+In arbitration, “all” is a philosophical concept with a very practical invoice.`);choices([
+ {label:`A — NARROW THE REQUEST PROPERLY
+Custodians. Date range. Search terms. Relevance. Privilege. Turn philosophy into scope.`,tag:'JUDGMENT',dc:14,mod:S.attrs.judgment+(S.skills['Evidence']||0),success:{text:`38,412 becomes 4,806. Nobody thanks you for the 33,606 documents they do not have to review. This is what success looks like in document production.`,d:{xp:4,client:1,internal:1}},fail:{text:`You narrow too aggressively and omit an obvious custodian. Opposing counsel finds the gap in the first Redfern round. The second review begins with less confidence.`,d:{rep:-1,energy:-1}},next:'arbMeeting'},
+ {label:`B — COLLECT BROADLY, SORT LATER
+Completeness first. Sleep later.`,tag:'GRIT',dc:15,mod:S.attrs.grit,success:{text:`The team gets through it. Production is complete and on time. The invoice now has narrative structure.`,d:{xp:3,rep:1,energy:-2}},fail:{text:`You review broadly, tag broadly and eventually produce broadly. Three weeks later the client asks why an internal strategy deck was in the production set.`,d:{client:-1,energy:-2}},next:'arbMeeting'}])},
+
+ arbMeeting(){sec(`YEAR III · STRATEGY`);narr(`THE MEETING`);tx(`Monday, 10:00.
+
+On the agenda:
+
+JURISDICTION
+PROCEDURAL ECONOMY
+CONFIDENTIALITY
+WITNESS ORDER
+SETTLEMENT POSITION
+
+In the room are two partners, three associates, the client, local counsel and an expert who has joined because somebody forwarded the calendar invitation.
+
+Forty-two minutes later, everyone has said something intelligent.
+
+The witness order remains unchanged.
+
+This is technically a strategy meeting.`);choices([
+ {label:`A — FORCE THREE DECISIONS
+What must be decided today? Who owns it? By when?`,tag:'PRESENCE',dc:13,mod:S.attrs.presence,success:{text:`The meeting produces three decisions and ends after 58 minutes. Several participants look surprised that meetings can do this.`,d:{xp:3,rep:1,client:1}},fail:{text:`You push too hard and trigger a twenty-minute debate about whether the decisions are really “decisions”. The meeting has defended itself.`,d:{energy:-1}},next:'y3boss'},
+ {label:`B — LET THE DISCUSSION RUN
+Good strategy needs room.`,tag:'INSTINCT',dc:14,mod:S.attrs.instinct,success:{text:`A point nobody had framed properly emerges from the discussion. The meeting was long but useful, which is rarer than either side admits.`,d:{xp:3,rep:1}},fail:{text:`Ninety minutes later everyone understands the problem better and the timetable worse.`,d:{energy:-2}},next:'y3boss'}])},
+
+ arbReadSubmissions(){sec(`YEAR IV · READING`);narr(`THE OTHER SIDE'S SUBMISSION`);tx(`Thursday, 17:32.
+
+Respondent's Rejoinder arrives.
+
+348 pages.
+1,126 footnotes.
+Two expert reports.
+A new annex numbered R-1987.
+
+The email says:
+
+“Please find attached.”
+
+You admire the restraint.
+
+The client wants “your initial view” before the 19:00 call.
+
+There are 88 minutes.
+
+The document has 348 pages and does not appear concerned by this.`);choices([
+ {label:`A — READ FOR THE FIVE THINGS THAT COULD CHANGE THE CASE
+New argument, new evidence, concession, expert move, procedural ask.`,tag:'JUDGMENT',dc:14,mod:S.attrs.judgment+(S.skills['Case Strategy']||0),success:{text:`At 18:47 you have five points and one real surprise. The client call is useful because you know what you do not yet know.`,d:{xp:4,client:1,rep:1}},fail:{text:`You identify five points. Point six turns out to be the one the partner asks about first.`,d:{energy:-1}},next:'arbReadExhibits'},
+ {label:`B — START AT PAGE 1
+The document deserves to be read as written.`,tag:'GRIT',dc:15,mod:S.attrs.grit,success:{text:`At 19:00 you are on page 219 but have already found the hidden concession in footnote 604. The call survives.`,d:{xp:3,rep:1,energy:-1}},fail:{text:`At 18:59 you are on page 173 and know an impressive amount about background facts the client already lived through.`,d:{energy:-2}},next:'arbReadExhibits'}])},
+
+ arbReadExhibits(){sec(`YEAR IV · THE EXHIBITS`);narr(`C-2000`);tx(`Friday, 21:04.
+
+The exhibit list now runs past C-2000.
+
+The next document is C-2001.
+
+Nobody celebrates.
+
+C-2001 is a 74-page PDF of scanned emails in which page 38 contains the phrase everyone has been looking for since Tuesday.
+
+The search function does not work because the PDF is an image.
+
+International arbitration has reached the future and brought binders with it.`);choices([
+ {label:`A — BUILD A MICRO-INDEX
+Document, date, author, proposition, useful page. Make the exhibit earn its number.`,tag:'CRAFT',dc:13,mod:S.attrs.craft+(S.skills['Evidence']||0),success:{text:`By midnight C-2001 is no longer 74 pages. It is three propositions and four pages. Tomorrow everyone will call that “obvious”.`,d:{xp:3,internal:2}},fail:{text:`The index becomes another document to maintain. At 00:40 it has 19 columns and no clear proposition.`,d:{energy:-1}},next:'arbExpert'},
+ {label:`B — READ THE WHOLE THING
+Somewhere in these 74 pages is context. Context is how exhibits defend themselves.`,tag:'GRIT',dc:14,mod:S.attrs.grit,success:{text:`Page 38 contains the phrase. Page 42 explains why it matters. The extra four pages save the argument from becoming too good to be true.`,d:{xp:3,rep:1,energy:-1}},fail:{text:`At page 63 you realise the thread is duplicated from page 12. C-2001 has been reading you back.`,d:{energy:-2}},next:'arbExpert'}])},
+
+ arbHearing(){sec(`YEAR V · THE HEARING`);narr(`THE HOTEL CONFERENCE ROOM`);tx(`Hearing Day 2, 08:43.
+
+A hotel conference room has become a tribunal.
+
+Three arbitrators.
+Two counsel tables.
+Water bottles aligned with military precision.
+Microphones nobody trusts.
+Five mini-bundles.
+Two laptops.
+One witness waiting outside.
+
+The room looks calm.
+
+This is misleading.`);choices([
+ {label:`A — RUN THE ROOM
+Witness order, documents, ELMO, timekeeping, who speaks, who does not.`,tag:'DRIVE',dc:15,mod:S.attrs.drive,success:{text:`The plan breaks twice. Each time somebody knows what to do next. That is the real purpose of a hearing plan.`,d:{xp:4,rep:2,internal:2}},fail:{text:`You turn the hearing plan into your personal to-do list. By 11:00 three people are waiting for instructions and you are needed in four places.`,d:{energy:-3}},next:'arbPlan'},
+ {label:`B — FOCUS ON YOUR CROSS
+Twelve minutes can matter more than twelve coordinated people.`,tag:'CRAFT',dc:15,mod:S.attrs.craft+(S.skills['Advocacy']||0),success:{text:`One document. One contradiction. Sit down. Nobody at counsel table says anything, which is how you know it worked.`,d:{xp:4,rep:2,client:1}},fail:{text:`Question four opens a door that is not in the outline. The witness walks through it carrying three new explanations.`,d:{energy:-2}},next:'arbPlan'}])},
+
+ arbRecord(){sec(`YEAR II · THE RECORD`);narr(`THE FIVE BUNDLES`);tx(`Friday, 18:36.
+
+On the conference table are five black mini-bundles:
+
+CLAIMANT'S SUBMISSIONS · PART I
+CLAIMANT'S SUBMISSIONS · PART II
+RESPONDENT'S SUBMISSIONS · PART I
+RESPONDENT'S SUBMISSIONS · PART II
+HEARING AUTHORITIES · A1–A80
+
+Beside them sit Exhibits C1–C220 and R1–R220.
+
+The partner says: “I need the three documents that actually decide the point.”
+
+There are several thousand pages available to assist you.
+
+This is why arbitration lawyers develop unusually strong opinions about tabs.`);choices([
+ {label:`A — BUILD THE ISSUE MAP
+Start with the proposition, then trace each side's submission to the exhibit and authority that supports it.`,tag:'JUDGMENT',dc:13,mod:S.attrs.judgment+(S.skills['Case Strategy']||0),success:{text:`Three propositions. Seven documents. Two authorities. The mountain of paper remains physically impressive and intellectually much smaller.`,d:{xp:3,rep:1,internal:1}},fail:{text:`The map becomes a second bundle about the first bundle. At 22:10 you have organised everything except the answer.`,d:{energy:-1}},next:'y2boss'},
+ {label:`B — READ EVERYTHING IN ORDER
+Claimant first. Respondent second. Authorities last. There is a system.`,tag:'CRAFT',dc:14,mod:S.attrs.craft+(S.skills['Evidence']||0),success:{text:`At 00:14 you find the sentence everyone else has missed. It is in Exhibit R-173, page 46. Naturally.`,d:{xp:3,rep:2,energy:-1}},fail:{text:`At 00:14 you are on R-91. The record is winning.`,d:{energy:-2}},next:'y2boss'},
+ {label:`C — ASK THE PARALEGAL FOR THE MASTER INDEX
+Someone built this record. Start with the person who knows where it lives.`,tag:'INSTINCT',dc:11,mod:S.attrs.instinct,success:{text:`The master index gets you to the right seven documents in twenty minutes. The paralegal also tells you which exhibit was replaced twice and should be treated with suspicion.`,d:{xp:2,internal:2}},fail:{text:`The index is current as of Tuesday. It is Friday. In arbitration, that is an archaeological period.`,d:{}},next:'y2boss'}])},
+
+ arbExpert(){sec(`YEAR IV · THE EXPERT`);narr(`THE MODEL AND THE REPORT`);tx(`Tuesday, 20:08.
+
+The quantum expert sends Version 19 of the report.
+
+Ninety-seven pages. Twelve tables. Four appendices. One Excel model with enough tabs to qualify as a small jurisdiction.
+
+The conclusion is stronger than Version 18.
+
+The assumptions are almost the same.
+
+Almost.
+
+The client loves the conclusion. You have learned to fear the word “clearly” when it appears in an expert report.`);choices([
+ {label:`A — TEST THE THREE ASSUMPTIONS THAT MOVE THE NUMBER
+Ignore the prose for an hour. Find out what the conclusion actually depends on.`,tag:'JUDGMENT',dc:14,mod:S.attrs.judgment+(S.skills['Evidence']||0),success:{text:`One assumption is vulnerable. You find it internally, before opposing counsel gets to discover it with a projector and an audience. The expert is briefly offended and permanently grateful.`,d:{xp:4,rep:2,client:1}},fail:{text:`You identify the right assumption in the wrong way. The next forty minutes become an expert seminar on why lawyers do not understand models.`,d:{energy:-1}},next:'y4boss'},
+ {label:`B — TURN 97 PAGES INTO THREE PROPOSITIONS
+The tribunal needs the point, the assumption and the number — preferably in that order.`,tag:'CRAFT',dc:13,mod:S.attrs.craft+(S.skills['Drafting']||0),success:{text:`Three propositions, five references, no magic. For the first time, the submission understands the expert better than the expert understands the submission.`,d:{xp:3,rep:1,client:1}},fail:{text:`You simplify one qualification out of existence. The expert restores it with four new paragraphs. The report has won another round.`,d:{energy:-1}},next:'y4boss'},
+ {label:`⚔ QUANTUM SPECIALIST — TEST THE MODEL
+Open the native model and reconcile the report tables to the source cells before anyone starts polishing slides.`,tag:'CRAFT',dc:11,mod:S.attrs.craft,subclassOnly:'Quantum Specialist',ability:'TEST THE MODEL',signatureBonus:2,success:{text:`You find a broken link before it becomes a cross-examination exhibit. The number changes. The credibility does not.`,d:{xp:5,rep:2,client:1,flags:{sigY4:true}}},fail:{text:`The model reconciles. Your evening does not.`,d:{energy:-1}},next:'y4boss'}])},
+
+ arbPlan(){sec(`YEAR V · HEARING PREP`);narr(`THE HEARING PLAN`);tx(`Six days before the hearing.
+
+On the wall is a checklist:
+
+FACTS
+EVIDENCE
+WITNESSES
+EXPERTS
+CLOSING
+
+On your yellow pad:
+
+☑ RESEARCH
+☑ STRATEGY
+☑ OUTLINE
+☑ COUNTERARGUMENTS
+☐ REHEARSE
+
+The partner looks at the last box.
+
+“We know the case.”
+
+That is true.
+
+It is also something people say shortly before discovering that knowing a case and presenting one are different professional activities.`);choices([
+ {label:`A — REHEARSE THE OPENING AND THE FIRST CROSS
+Book the room. Put the slides up. Make somebody interrupt.`,tag:'PRESENCE',dc:14,mod:S.attrs.presence+(S.skills['Advocacy']||0),success:{text:`The first run is twelve minutes too long. The second is better. By the third, the argument sounds obvious — which is the result of several hours making it so.`,d:{xp:4,rep:2,energy:-1}},fail:{text:`The rehearsal becomes a partner monologue about the case theory. Nobody rehearses. The unchecked box survives.`,d:{energy:-1}},next:'y5boss'},
+ {label:`B — RED-TEAM THE CASE
+Give the junior the other side's submissions and ask for the five questions you least want the tribunal to ask.`,tag:'JUDGMENT',dc:14,mod:S.attrs.judgment+(S.skills['Case Strategy']||0),success:{text:`Question four is unpleasant. That is why it is useful. By hearing day, the answer is three sentences instead of eleven minutes.`,d:{xp:4,rep:2,internal:1}},fail:{text:`The exercise produces seventeen hypothetical disasters. You now have more counterarguments than argument.`,d:{energy:-1}},next:'y5boss'},
+ {label:`C — FINISH THE RECORD FIRST
+Witness folders, expert references, authorities, chronology. Rehearsal can happen when the machinery works.`,tag:'CRAFT',dc:13,mod:S.attrs.craft+(S.skills['Evidence']||0),success:{text:`On hearing morning every document opens where it should. Nobody applauds. This is how you know the preparation worked.`,d:{xp:3,internal:2}},fail:{text:`The machinery is immaculate. The opening is first delivered aloud at 08:41 in the taxi.`,d:{energy:-2}},next:'y5boss'}])},
+
+ aiFiling(){sec(`YEAR VI · TECHNOLOGY`);narr(`THE AI SHORTCUT`);tx(`Wednesday, 21:26.
+
+A US enforcement proceeding is running alongside the arbitration. US counsel needs a section of the federal-court brief overnight.
+
+Someone says the sentence that now appears in every law firm sooner or later:
+
+“Why don't we use AI for the first draft?”
+
+You do.
+
+Twenty-five minutes go into the prompt.
+Then another prompt correcting the first prompt.
+Then a third explaining that “leading US authority” means an authority that exists.
+
+The draft is fluent. Very fluent.
+
+It cites six cases.
+
+You have time to verify perhaps three properly before the draft has to go to US counsel.
+
+The AI has saved approximately forty minutes, provided nobody counts the last seventy.`);choices([
+ {label:`A — USE IT, BUT VERIFY EVERY AUTHORITY AND PROPOSITION
+No citation enters the filing until a human has opened the case and checked what it actually says.`,tag:'JUDGMENT',dc:13,mod:S.attrs.judgment+(S.skills['Research']||0),success:{text:`Two citations are wrong, one proposition is overstated and one case is excellent. After verification, the section is genuinely useful. AI saved some time. Humans saved the filing.`,d:{xp:4,rep:2,client:1,energy:-1,flags:{aiVerified:true}}},fail:{text:`Verification consumes the night. The draft is late, but accurate. US counsel is irritated for twenty minutes and relieved for much longer.`,d:{energy:-2,flags:{aiVerified:true}}},next:'y6boss'},
+ {label:`B — SPOT-CHECK IT AND SEND
+The prose is good. The citations look plausible. Time is real too.`,tag:'DRIVE',dc:18,mod:S.attrs.drive,success:{text:`The sampled authorities are genuine. By luck, so are the others. The filing goes in. You have saved time and learned absolutely the wrong lesson.`,d:{xp:3,rep:1,energy:1,flags:{aiGamble:true}}},fail:{text:`One authority does not exist. Another exists but says almost the opposite.
+
+Opposing counsel cannot find the first case. Then the judge cannot find it.
+
+The next docket entry is an ORDER TO SHOW CAUSE.
+
+US counsel explains, with impressive calm, that Rule 11 requires a reasonable inquiry into the legal contentions in a federal filing and permits sanctions. Courts have already sanctioned lawyers for submitting fabricated AI authorities.
+
+The client calls.
+Risk & Compliance calls.
+The partner closes the conference-room door.
+
+The forty minutes you saved have become their own matter.`,d:{rep:-4,client:-4,internal:-3,energy:-3,flags:{aiSanctions:true}}},next:'y6boss'},
+ {label:`C — DO NOT USE THE AI DRAFT
+Research and draft conventionally.`,out:{text:`It is slower than pressing Generate.
+
+It is considerably faster than explaining to a federal judge why an authority exists only in a language model.`,d:{energy:-1,flags:{aiDeclined:true}}},next:'y6boss'}])},
+
  y2boss(){sec('YEAR II · ORDEAL');narr('THE IMPOSSIBLE DEADLINE');tx(`Tuesday, 16:47.\n\nA tribunal order arrives. Respondent has raised a new admissibility objection. The tribunal wants comments by Wednesday, 12:00. The order thanks the parties in advance for their cooperation.\n\nThe partner is travelling. The senior associate is in another hearing.\n\nAt 17:03 the partner calls from an airport lounge:\n\n“ This shouldn't be too difficult. Could you get something together? I'm boarding. ”\n\nIt is difficult. Your Energy is ${S.energy}/10. A junior associate has capacity and now understands how you work.`);choices([
  {label:`A — THE ALL-NIGHTER\nTake ownership personally. Research and draft the submission yourself overnight.`,tag:'GRIT',dc:13,mod:S.attrs.grit,success:{text:'You get it done. The work is good. You are also running on fumes.',d:{xp:3,rep:2,energy:-3,life:-1}},fail:{text:'At 03:40 the draft is still moving sideways. Responsibility without leverage turns into exhaustion.',d:{xp:1,energy:-3,life:-1}},next:'train2'},
  {label:`B — BUILD THE TEAM\nGive the junior the research questions, set a structure, draft the key sections yourself and integrate later.`,tag:'JUDGMENT',dc:13,mod:S.attrs.judgment+1,success:{text:'The division of labour works. The junior returns usable research; you keep control of the argument without doing every task yourself.',d:{xp:3,rep:2,energy:-1,internal:1}},fail:{text:'The hand-off is too loose. You spend much of the night repairing the work you delegated.',d:{xp:2,energy:-2}},next:'train2'},
@@ -197,9 +510,9 @@ Ask whether the document changes the loss calculation at all.`,tag:'CRAFT',dc:12
  {label:`A — TAKE THE LOCAL ROLE\nRun the chapter's programme for a year.`,tag:'DRIVE',dc:12,mod:S.attrs.drive,success:{text:'You run the local programme for a year. Every young arbitration lawyer in the city now knows your name, and the national association now knows the chapter runs on time.',d:{clientNetwork:1,rep:1,energy:-1,flags:{yaa:2}}},fail:{text:'The programme happens, mostly despite you. The chapter forgives; coordination is graded on attendance, not elegance. The year still counts.',d:{clientNetwork:1,energy:-1,flags:{yaa:2}}},next:'y4b'},
  {label:`B — JUST KEEP ATTENDING\nThe dinners, nothing more.`,out:{text:'You keep attending. The chapter is run by someone else, competently, and the year passes.',d:{clientNetwork:1}},next:'y4b'}])},
  y4b(){sec('YEAR IV · ENCOUNTER');narr('THE PARTNER WHO NOTICES');tx(`A senior partner from another office asks you to join a pitch because they heard you were good with clients. This is not your matter. Your own team is busy.`);choices([
- {label:`A — JOIN THE PITCH\nMake the time and prepare properly.`,tag:'PRESENCE',dc:14,mod:S.attrs.presence,success:{text:'The pitch goes well. The senior partner starts asking for you by name.',d:{rep:2,internal:2,sponsor:1,energy:-1}},fail:{text:'You are competent but peripheral. Your own workload still suffered.',d:{energy:-2}},next:'y4boss'},
- {label:`B — PROTECT THE MATTER\nDecline because your existing case needs you.`,out:{text:'Your team appreciates the loyalty. The other partner moves on.',d:{internal:1}},next:'y4boss'},
- {label:`C — FIND COVER\nDelegate enough of your current work to join the pitch without dropping the matter.`,tag:'JUDGMENT',dc:14,mod:S.attrs.judgment+1,success:{text:'You create capacity instead of merely working more hours. That is noticed.',d:{xp:2,internal:2,sponsor:1}},fail:{text:'The delegation is too late. You end up doing both jobs badly tired.',d:{energy:-2,life:-1}},next:'y4boss'}])},
+ {label:`A — JOIN THE PITCH\nMake the time and prepare properly.`,tag:'PRESENCE',dc:14,mod:S.attrs.presence,success:{text:'The pitch goes well. The senior partner starts asking for you by name.',d:{rep:2,internal:2,sponsor:1,energy:-1}},fail:{text:'You are competent but peripheral. Your own workload still suffered.',d:{energy:-2}},next:'arbReadSubmissions'},
+ {label:`B — PROTECT THE MATTER\nDecline because your existing case needs you.`,out:{text:'Your team appreciates the loyalty. The other partner moves on.',d:{internal:1}},next:'arbReadSubmissions'},
+ {label:`C — FIND COVER\nDelegate enough of your current work to join the pitch without dropping the matter.`,tag:'JUDGMENT',dc:14,mod:S.attrs.judgment+1,success:{text:'You create capacity instead of merely working more hours. That is noticed.',d:{xp:2,internal:2,sponsor:1}},fail:{text:'The delegation is too late. You end up doing both jobs badly tired.',d:{energy:-2,life:-1}},next:'arbReadSubmissions'}])},
  y4boss(){sec('YEAR IV · ORDEAL');narr('THE MATTER WITHOUT THE PARTNER');tx(`The partner is unexpectedly unavailable. The client needs a recommendation on whether to seek emergency relief before Monday.
 
 For the first time, everyone on the call is waiting for you.`);choices([
@@ -385,7 +698,9 @@ Explain what you already run: matters, juniors, clients and internal relationshi
  {label:`⚔ QUANTUM SPECIALIST — THE MONEY IN THE DISPUTE
 “Every major dispute eventually becomes a dispute about value.”`,tag:'CRAFT',dc:12,mod:S.attrs.craft,subclassOnly:'Quantum Specialist',ability:'TEST THE MODEL',signatureBonus:2,success:{text:'You position yourself between legal strategy, experts and damages — a proposition the firm can explain to clients.',d:{business:3,sponsor:1,flags:{sigY7:true}}},fail:{text:'The technical proposition lands. The commercial one is still forming.',d:{business:1}},next:'y7sponsor'}])},
 
- y7sponsor(){sec('YEAR VII · NOVEMBER');narr('THE SPONSOR');tx(`Two weeks before the committee meeting, Clara walks into your office and closes the door.
+ y7sponsor(){sec('YEAR VII · NOVEMBER');narr('THE SPONSOR');tx(`Two weeks before the committee meeting, Clara walks into your office and closes the door.${S.flags.aiSanctions?'\n\nThe AI filing incident is still in the partnership papers. Internally it has acquired the kind of name incidents acquire when everybody knows which one you mean: “the show-cause order”.':''}
+
+Clara walks into your office and closes the door.
 
 “I've heard there are questions.”
 
