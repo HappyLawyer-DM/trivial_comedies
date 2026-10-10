@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EQUITY — A Sentimental Comedy for Serious People</title>
+<style>
+  :root{
+    --paper:#F6F2E8;
+    --paper-deep:#EDE7D8;
+    --ink:#23201A;
+    --ink-soft:#5A5445;
+    --navy:#1C2B45;
+    --brass:#9A7B33;
+    --seal:#7E2F35;
+    --seal-hi:#96424A;
+    --rule:#D6CDB6;
+    --serif:Georgia, "Times New Roman", serif;
+    --mono:"Courier New", Courier, ui-monospace, monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{background:var(--paper-deep);}
+  body{
+    font-family:var(--serif);
+    color:var(--ink);
+    background:var(--paper);
+    max-width:760px;
+    margin:0 auto;
+    min-height:100vh;
+    border-left:1px solid var(--rule);
+    border-right:1px solid var(--rule);
+    padding-bottom:80px;
+  }
+  .page{padding:28px 34px 0;}
+
+  /* ---------- letterhead ---------- */
+  header{
+    text-align:center;
+    padding:36px 30px 22px;
+    border-bottom:3px double var(--navy);
+  }
+  .eyebrow{font-family:var(--mono); font-size:10.5px; letter-spacing:.3em; color:var(--ink-soft); text-transform:uppercase;}
+  h1{
+    font-weight:normal;
+    font-size:clamp(26px,6vw,40px);
+    letter-spacing:.32em;
+    margin:16px 0 4px;
+    padding-left:.32em; /* optically center the letterspacing */
+    color:var(--navy);
+  }
+  .wilde{font-style:italic; font-size:13.5px; color:var(--ink-soft); margin-bottom:14px;}
+  .firm{
+    font-size:12.5px; line-height:1.8; color:var(--ink-soft);
+  }
+  .firm b{color:var(--ink); letter-spacing:.08em;}
+  .agenda{
+    display:inline-block; margin-top:14px; padding:3px 12px;
+    border:1px solid var(--brass); color:var(--brass);
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.18em;
+  }
+
+  /* ---------- status ledger ---------- */
+  #status{
+    position:sticky; top:0; z-index:20;
+    background:var(--navy); color:#EFE6CF;
+    font-family:var(--mono);
+    font-size:11px; letter-spacing:.08em;
+    padding:8px 34px;
+    display:flex; gap:18px; flex-wrap:wrap;
+    border-bottom:2px solid var(--brass);
+  }
+  #status .lbl{opacity:.75; margin-right:6px;}
+  #status .bar{letter-spacing:0;}
+  #status .warn{color:#E9B44C;}
+  #status .crit{color:#F09A8D;}
+
+  /* ---------- minutes ---------- */
+  .stamp-line{
+    margin:34px 0 10px;
+    font-family:var(--mono);
+    font-size:11px; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--ink-soft);
+    display:flex; align-items:center; gap:12px;
+  }
+  .stamp-line::after{content:""; flex:1; border-top:1px solid var(--rule);}
+  .narr{
+    font-size:17.5px; line-height:1.78;
+    margin:14px 0;
+  }
+  .tx{
+    font-family:var(--mono);
+    font-size:13.5px; line-height:1.8; margin:14px 0;
+    white-space:pre-wrap;
+  }
+  .tx .spk{font-weight:bold;}
+  .result{
+    border-left:3px solid var(--brass);
+    padding:10px 16px; margin:18px 0;
+    background:rgba(154,123,51,.07);
+    font-size:15.5px; line-height:1.75;
+  }
+  .result.bad{border-color:var(--seal); background:rgba(126,47,53,.06);}
+  .delta{font-family:var(--mono); font-size:11px; letter-spacing:.1em; color:var(--ink-soft); display:block; margin-top:8px;}
+  .delta .d-pos{color:#2E6B3F; font-weight:bold;}
+  .delta .d-neg{color:var(--seal); font-weight:bold;}
+
+  /* ---------- flying d20 ---------- */
+  .d20fly{ position:fixed; z-index:999; left:-130px; top:24vh;
+    width:96px; height:96px; pointer-events:none;
+    animation:d20x 1.05s cubic-bezier(.18,.65,.45,1) forwards; }
+  .d20arc{width:100%; height:100%; animation:d20y 1.05s linear forwards;}
+  .d20spin{width:100%; height:100%; animation:d20r 1.05s cubic-bezier(.2,.6,.3,1) forwards;
+           filter:drop-shadow(0 10px 12px rgba(0,0,0,.35));}
+  .d20spin svg{width:100%; height:100%; display:block;}
+  .d20fly.settled .d20spin svg{animation:d20wob .42s ease-out;}
+  .d20fly .num{ font-family:var(--mono); font-weight:bold; font-size:33px;
+    fill:#E9C96A; stroke:#10182A; stroke-width:3px; paint-order:stroke; }
+  @keyframes d20x{ from{transform:translateX(0);} to{transform:translateX(calc(50vw + 80px));} }
+  @keyframes d20y{
+    0%  {transform:translateY(-120px) scale(1,1);}
+    26% {transform:translateY(150px)  scale(1.06,.9);}
+    30% {transform:translateY(140px)  scale(1,1);}
+    48% {transform:translateY(40px)   scale(1,1);}
+    64% {transform:translateY(150px)  scale(1.05,.92);}
+    68% {transform:translateY(144px)  scale(1,1);}
+    80% {transform:translateY(108px)  scale(1,1);}
+    90% {transform:translateY(150px)  scale(1.03,.95);}
+    100%{transform:translateY(150px)  scale(1,1);}
+  }
+  @keyframes d20r{ from{transform:rotate(0deg);} to{transform:rotate(720deg);} }
+  @keyframes d20wob{ 0%{transform:rotate(0deg);} 35%{transform:rotate(-7deg);}
+    65%{transform:rotate(4deg);} 100%{transform:rotate(0deg);} }
+  @media (prefers-reduced-motion: reduce){ .d20fly{display:none;} }
+
+  /* ---------- choices ---------- */
+  .choices{margin:22px 0 8px;}
+  .choice{
+    display:block; width:100%;
+    text-align:left;
+    font-family:var(--serif); font-size:15.5px; line-height:1.6;
+    background:none; border:1px solid var(--rule);
+    border-left:4px solid var(--navy);
+    padding:12px 16px; margin:10px 0;
+    cursor:pointer; color:var(--ink);
+    transition:background .12s, border-color .12s;
+  }
+  .choice:hover:not(:disabled){background:#fff; border-left-color:var(--brass);}
+  .choice:focus-visible{outline:2px solid var(--seal); outline-offset:2px;}
+  .choice:disabled{opacity:.45; cursor:not-allowed;}
+  .choice .tagline{display:block; font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; color:var(--ink-soft); margin-top:6px; text-transform:uppercase;}
+
+  /* ---------- wax seal (dice) ---------- */
+  .diebox{min-height:110px; display:flex; align-items:center; margin:20px 0;}
+  .die-seal{
+    width:96px; height:96px; border-radius:50%;
+    background:radial-gradient(circle at 34% 28%, var(--seal-hi), var(--seal) 65%);
+    color:#F3E3C8;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    transform:rotate(-5deg);
+    box-shadow:inset 0 0 0 4px rgba(243,227,200,.25), inset 0 0 18px rgba(0,0,0,.35), 0 2px 4px rgba(0,0,0,.2);
+  }
+  .die-seal .big{font-size:32px; font-weight:bold; letter-spacing:.03em;}
+  .die-seal .small{font-family:var(--mono); font-size:8.5px; letter-spacing:.14em; margin-top:2px; text-align:center; padding:0 8px;}
+  @keyframes press{
+    0%{transform:rotate(-5deg) scale(1.7); opacity:0;}
+    70%{transform:rotate(-5deg) scale(.95); opacity:1;}
+    100%{transform:rotate(-5deg) scale(1);}
+  }
+  .die-seal.press{animation:press .35s ease-out;}
+  @media (prefers-reduced-motion: reduce){
+    .die-seal.press{animation:none;}
+  }
+
+  /* ---------- archetype cards ---------- */
+  .classes{margin:20px 0;}
+  .cls{
+    display:block; width:100%; text-align:left;
+    font-family:var(--serif);
+    border:1px solid var(--rule); background:none;
+    padding:14px 18px; margin:12px 0; cursor:pointer; color:var(--ink);
+    transition:background .12s;
+  }
+  .cls:hover{background:#fff;}
+  .cls:focus-visible{outline:2px solid var(--seal); outline-offset:2px;}
+  .cls .nm{font-family:var(--mono); font-size:13.5px; font-weight:bold; letter-spacing:.1em; color:var(--navy);}
+  .cls .rl{font-size:15.5px; color:var(--ink-soft); display:block; margin:6px 0 5px; line-height:1.6;}
+  .cls .bn{font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; color:var(--brass); text-transform:uppercase;}
+
+  /* ---------- continue & endings ---------- */
+  .cont{
+    display:block; margin:20px auto 6px;
+    font-family:var(--mono); font-size:12px; letter-spacing:.18em;
+    background:none; border:1px solid var(--navy); color:var(--navy);
+    padding:10px 24px; cursor:pointer;
+    transition:background .12s, color .12s;
+  }
+  .cont:hover{background:var(--navy); color:var(--paper);}
+  .cont:focus-visible{outline:2px solid var(--seal); outline-offset:2px;}
+
+  .ending-seal{text-align:center; margin:36px 0 8px;}
+  .ending-seal span{
+    display:inline-block;
+    border:4px solid var(--seal); color:var(--seal);
+    font-family:var(--mono);
+    font-size:clamp(16px,4vw,24px); font-weight:bold; letter-spacing:.2em;
+    padding:14px 26px; transform:rotate(-3deg);
+    text-transform:uppercase;
+  }
+  .ending-seal.gold span{border-color:var(--brass); color:var(--brass);}
+  .restart{
+    display:block; margin:34px auto 0;
+    font-family:var(--mono); font-size:13px; letter-spacing:.12em;
+    background:var(--navy); color:#EFE6CF;
+    border:none; padding:12px 26px; cursor:pointer;
+  }
+  .restart:hover{background:#111D33;}
+
+  footer{
+    margin-top:60px; padding:20px 30px 0;
+    border-top:1px solid var(--rule);
+    font-family:var(--mono);
+    font-size:10px; letter-spacing:.12em; color:var(--ink-soft);
+    text-align:center; line-height:1.9;
+  }
+  @media (max-width:520px){
+    .page{padding:22px 18px 0;}
+    header{padding:28px 16px 18px;}
+    #status{padding:8px 18px; gap:10px;}
+    footer{padding:20px 16px 0;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Minutes of a Partners' Week · Strictly Collegial</div>
+  <h1>EQUITY</h1>
+  <div class="wilde">A Sentimental Comedy for Serious People</div>
+  <div class="firm">
+    <b>GRIMMWALD &amp; FINCH LLP</b><br>
+    Attorneys at Law · est. 1897<br>
+    <span style="font-style:italic;">"We no longer do the drafting ourselves. We merely think about it constantly."</span>
+  </div>
+  <div class="agenda">AGENDA ITEM 7 · ANY OTHER BUSINESS</div>
+</header>
+
+<div id="status" hidden>
+  <span class="meter"><span class="lbl">BOOK OF BUSINESS</span><span class="bar" id="m-book"></span></span>
+  <span class="meter"><span class="lbl">GOODWILL</span><span class="bar" id="m-good"></span></span>
+  <span class="meter"><span class="lbl">ENERGY</span><span class="bar" id="m-en"></span></span>
+</div>
+
+<main class="page" id="app" aria-live="polite"></main>
+
+<footer>
+  A COMPANION PIECE TO "HEARING WEEK" · ALL PARTNERS FICTIONAL, ALL FEELINGS REAL<br>
+  THE PARTNERSHIP THANKS ITS ASSOCIATES · MINUTES APPROVED WITHOUT AMENDMENT
+</footer>
+
+<script>
+"use strict";
+
+/* ================= state ================= */
+let S = null;
+function freshState(){
+  return { cls:null, book:55, goodwill:60, energy:55, flags:{}, over:false };
+}
+
+/* ================= archetypes ================= */
+const CLASSES = [
+  { id:"rainmaker", nm:"THE RAINMAKER", bonus:{clients:3},
+    rl:"Can charm a mandate out of a stone. Remembers every client's birthday, and every client's dog.",
+    bn:"+3 on CLIENT checks" },
+  { id:"craftsman", nm:"THE CRAFTSMAN", bonus:{craft:3},
+    rl:"Made partner by accident, on merit. Still reads judgments for pleasure and thinks nobody has noticed.",
+    bn:"+3 on CRAFT checks" },
+  { id:"mentor", nm:"THE MENTOR", bonus:{people:3},
+    rl:"Half the associates list them, privately, as the reason they stayed. The other half haven't been asked yet.",
+    bn:"+3 on PEOPLE checks" },
+  { id:"diplomat", nm:"THE DIPLOMAT", bonus:{harmony:3},
+    rl:"Has never once lost their temper in a partners' meeting. Nobody knows how. Several have theories.",
+    bn:"+3 on HARMONY checks" },
+];
+function bonusFor(tag){
+  if(!S.cls || !tag) return 0;
+  return S.cls.bonus[tag] || 0;
+}
+
+/* ================= helpers ================= */
+const app = document.getElementById("app");
+const statusBar = document.getElementById("status");
+
+function bar(v){
+  const n = Math.max(0, Math.min(10, Math.round(v/10)));
+  return "█".repeat(n) + "░".repeat(10-n) + " " + Math.max(0,v);
+}
+function paintStatus(){
+  const b=document.getElementById("m-book"),
+        g=document.getElementById("m-good"),
+        e=document.getElementById("m-en");
+  b.textContent = bar(S.book);
+  g.textContent = bar(S.goodwill);
+  e.textContent = bar(S.energy);
+  b.className = "bar " + (S.book<=20?"crit":S.book<=40?"warn":"");
+  g.className = "bar " + (S.goodwill<=20?"crit":S.goodwill<=40?"warn":"");
+  e.className = "bar " + (S.energy<=20?"crit":S.energy<=40?"warn":"");
+}
+function apply(d){
+  if(!d) return "";
+  const parts=[];
+  const tint=(l,v)=>`<span class="${v>0?"d-pos":"d-neg"}">${l} ${fmt(v)}</span>`;
+  if(d.book){ S.book=Math.min(100,S.book+d.book); parts.push(tint("BOOK",d.book)); }
+  if(d.goodwill){ S.goodwill=Math.min(100,S.goodwill+d.goodwill); parts.push(tint("GOODWILL",d.goodwill)); }
+  if(d.energy){ S.energy=Math.min(100,S.energy+d.energy); parts.push(tint("ENERGY",d.energy)); }
+  paintStatus();
+  return parts.join(" · ");
+}
+function fmt(n){ return (n>0?"+":"")+n; }
+function el(html){ const t=document.createElement("template"); t.innerHTML=html.trim(); return t.content.firstChild; }
+function clear(){ app.innerHTML=""; window.scrollTo({top:0}); }
+function stampLine(txt){ app.appendChild(el(`<div class="stamp-line">${txt}</div>`)); }
+function narr(txt){ app.appendChild(el(`<p class="narr">${txt}</p>`)); }
+function tx(txt){ app.appendChild(el(`<div class="tx">${txt}</div>`)); }
+function checkDeath(){
+  if(S.energy<=0){ ending("sabbatical"); return true; }
+  return false;
+}
+
+const DIE_SND="data:audio/mpeg;base64,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qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqoCBHHX/w5qmwPhsZ+aURGai5kgkYqKmDDgUGDAQcWABoCR9UCaSvpR1o7XHnhImFJEIRooTnmmUSEiGTpA25qMrrNjKKxCIhkPkCNz4+UbLLLLUMjJrJ////L2S/kyhgQNHIya/srWWkZfLJf9lBRy//tYxOMDzmlg+A2Ya8oJr9yBlhkx+yyf+ahgwNHSyyf+ayOhkasFCwxKrFNMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//tYxL2D0N18qK2kcQgAADSAAAAEVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV";
+let _dieAudio=null;
+function dieSound(){
+  try{
+    _dieAudio = _dieAudio || new Audio(DIE_SND);
+    const a=_dieAudio.cloneNode();
+    a.volume=0.6;
+    const p=a.play(); if(p&&p.catch) p.catch(()=>{});
+  }catch(e){}
+}
+function flyD20(nat, done){
+  const reduce = typeof window.matchMedia==="function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(reduce){ done(); return; }
+  const fly=document.createElement("div"); fly.className="d20fly"; fly.setAttribute("aria-hidden","true");
+  fly.innerHTML=`<div class="d20arc"><div class="d20spin">
+    <svg viewBox="0 0 100 100">
+      <defs><linearGradient id="d20face" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#2A3550"/><stop offset="1" stop-color="#121A2C"/></linearGradient></defs>
+      <polygon points="50,3 91,26 91,74 50,97 9,74 9,26" fill="url(#d20face)" stroke="#B08D3E" stroke-width="2.6" stroke-linejoin="round"/>
+      <polygon points="50,16 82,70 18,70" fill="rgba(255,255,255,.055)" stroke="#B08D3E" stroke-width="1.6" stroke-linejoin="round" opacity=".95"/>
+      <polygon points="50,3 91,26 82,70 50,16" fill="rgba(0,0,0,.16)"/>
+      <polygon points="50,3 9,26 18,70 50,16" fill="rgba(255,255,255,.05)"/>
+      <polygon points="9,74 50,97 50,16 18,70" fill="rgba(0,0,0,.08)" opacity=".5"/>
+      <line x1="50" y1="3" x2="50" y2="16" stroke="#B08D3E" stroke-width="1.6"/>
+      <line x1="91" y1="26" x2="82" y2="70" stroke="#B08D3E" stroke-width="1.2" opacity=".7"/>
+      <line x1="9" y1="26" x2="18" y2="70" stroke="#B08D3E" stroke-width="1.2" opacity=".7"/>
+      <line x1="91" y1="74" x2="82" y2="70" stroke="#B08D3E" stroke-width="1.6"/>
+      <line x1="9" y1="74" x2="18" y2="70" stroke="#B08D3E" stroke-width="1.6"/>
+      <polyline points="12,28 50,7 88,28" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="1.4"/>
+      <text class="num" x="50" y="61" text-anchor="middle"></text>
+    </svg></div></div>`;
+  document.body.appendChild(fly);
+  const numEl=fly.querySelector(".num");
+  dieSound();
+  const flick=setInterval(()=>{ numEl.textContent=1+Math.floor(Math.random()*20); },75);
+  setTimeout(()=>{
+    clearInterval(flick);
+    numEl.textContent=nat;
+    fly.classList.add("settled");
+    if(nat===20) numEl.setAttribute("fill","#FFD700");
+    if(nat===1)  numEl.setAttribute("fill","#E0524A");
+    setTimeout(()=>{ fly.remove(); done(); },640);
+  },1050);
+}
+/* the die rolls across the minutes; the seal records the verdict */
+function rollDie(tag, cb){
+  const box = el(`<div class="diebox"></div>`);
+  app.appendChild(box);
+  const nat = 1 + Math.floor(Math.random()*20);
+  const b = bonusFor(tag);
+  const total = nat + b;
+  flyD20(nat, ()=>{
+    const lbl = b ? `${nat} ${b>0?"+":""}${b} ${tag.toUpperCase()}` : `D20: ${nat}`;
+    box.appendChild(el(
+      `<div class="die-seal press" role="status">
+        <span class="big">${total}</span>
+        <span class="small">${lbl}${nat===20?" · NAT 20":""}${nat===1?" · NAT 1":""}</span>
+      </div>`));
+    setTimeout(()=>cb(total, nat), 500);
+  });
+}
+
+function choices(list){
+  const wrap = el(`<div class="choices"></div>`);
+  list.forEach(c=>{
+    const btn = el(`<button class="choice">${c.label}${c.tag?`<span class="tagline">${c.tag.toUpperCase()} CHECK · DC ${c.dc}</span>`:(c.tagline?`<span class="tagline">${c.tagline}</span>`:"")}</button>`);
+    btn.addEventListener("click", ()=>{
+      wrap.querySelectorAll("button").forEach(b=>b.disabled=true);
+      btn.style.borderLeftColor="var(--brass)";
+      if(c.tag){
+        rollDie(c.tag,(total,nat)=>{
+          const ok = nat===20 ? true : nat===1 ? false : total>=c.dc;
+          const out = ok?c.success:c.fail;
+          showResult(out, ok);
+          if(checkDeath()) return;
+          contBtn(out.next);
+        });
+      } else if(c.out){
+        showResult(c.out, !c.out.bad);
+        if(checkDeath()) return;
+        contBtn(c.next || c.out.next);
+      } else {
+        go(c.next);
+      }
+    });
+    wrap.appendChild(btn);
+  });
+  app.appendChild(wrap);
+}
+function showResult(out, ok){
+  if(out.f){ S.flags[out.f]=(S.flags[out.f]||0)+1; }
+  const deltas = apply(out.d);
+  app.appendChild(el(
+    `<div class="result ${ok?"":"bad"}">${out.text}${deltas?`<span class="delta">${deltas}</span>`:""}</div>`));
+  app.lastChild.scrollIntoView?.({behavior:"smooth", block:"nearest"});
+}
+function contBtn(next, label){
+  const b = el(`<button class="cont">${label || "CONTINUE \u25B8"}</button>`);
+  b.addEventListener("click", ()=>{ go(next); });
+  app.appendChild(b);
+  b.scrollIntoView?.({behavior:"smooth", block:"nearest"});
+}
+
+/* ================= scenes ================= */
+const SCENES = {
+
+start(){
+  clear();
+  statusBar.hidden = true;
+  stampLine("SUNDAY EVENING · THE OFFICE");
+  narr("The office is quiet. Brass plate by the door, worn smooth by a century of thumbs. Upstairs, the associates are young and fearless and billing. You do not do the drafting any more \u2014 you send others, and worry, and sign things. It is, though nobody says it aloud, the strangest promotion in the world: they gave you the firm, and took away the work.");
+  narr("Monday is coming. Who did you become?");
+  const wrap = el(`<div class="classes"></div>`);
+  CLASSES.forEach(c=>{
+    const b = el(`<button class="cls"><span class="nm">${c.nm}</span><span class="rl">${c.rl}</span><span class="bn">${c.bn}</span></button>`);
+    b.addEventListener("click", ()=>{
+      S.cls = c;
+      statusBar.hidden = false;
+      paintStatus();
+      go("monday");
+    });
+    wrap.appendChild(b);
+  });
+  app.appendChild(wrap);
+},
+
+/* ---- Monday: the inbox ---- */
+monday(){
+  clear();
+  stampLine("MONDAY · 07:12 · FORTY-TWO UNREAD");
+  narr("The inbox has been breeding over the weekend, as inboxes do. Forty-two unread. Three are marked urgent; one of those actually is. Somewhere in the middle sits Friday's voicemail from the Millwright, your client of fifteen years, who sounded \u2014 not upset, exactly. Quieter than usual. You noticed. You always notice.");
+  choices([
+    { label:`Call the Millwright first. The emails can breed a little longer.`,
+      tag:"clients", dc:10,
+      success:{ text:`It takes him four minutes to get to it: his son is taking over the mill, and he's frightened of getting the handover wrong. Not a legal question. You talk for half an hour anyway, and somewhere in it a succession mandate is born \u2014 but that isn't why you called, and he knows it, and that is why it works.`, d:{book:+8, goodwill:+3}, next:"ledger" },
+      fail:{ text:`He's fine \u2014 the quietness was a head cold. But the call runs fifty minutes because he wants to tell you about the new grain contract, in detail, with tangents. You surface at 08:05 to an inbox at forty-eight. Worth it. Probably.`, d:{book:+3, energy:-5}, next:"ledger" } },
+    { label:`Coffee with the new associate first. She started Monday last week and has been eating lunch alone.`,
+      out:{ text:`Her name is Wren. She's read everything, is terrified of everyone, and asks \u2014 quietly \u2014 whether it's normal to love the work this much. You remember the question. You remember being the one asking it. "Yes," you say. "Guard that." The emails waited. They always do.`, d:{goodwill:+5, energy:+3}, f:"people", next:"ledger" } },
+    { label:`Triage. Ruthlessly. A partner serves nobody from underneath an inbox.`,
+      out:{ text:`Twenty minutes, forty-two verdicts. Delegate, decline, defer, two genuine answers, one "let's discuss \u2014 2 min?" that will cost someone an hour. By 07:40 the desk is clear and the day is yours, which is the closest thing this job has to a morning victory.`, d:{energy:+6, book:+2}, next:"ledger" } },
+  ]);
+},
+
+/* ---- Monday pm: the origination ledger ---- */
+ledger(){
+  clear();
+  stampLine("MONDAY · 16:00 · THE ORIGINATION LEDGER");
+  narr("Two of your partners have discovered, simultaneously and irreconcilably, that each of them alone brought in the new Saltworks mandate. Brack met the chairman at a wedding; Mortlake has \u201cbeen cultivating the space for years\u201d. The origination ledger has one line per client and no field for feelings. With great civility, the two of them have agreed to let you decide \u2014 the partnership's traditional method of ruining a third partner's week.");
+  choices([
+    { label:`Propose a split so carefully reasoned that both men conclude, privately, that they have won.`,
+      tag:"harmony", dc:11,
+      success:{ text:`Fifty-fifty, a review mechanism in year two, and a schedule of assumptions running to four pages. Brack reads it and hears \u201cfifty\u201d. Mortlake reads it and hears \u201creview\u201d. Both thank you warmly. The review will never happen; the schedule will never be reopened. Peace, in a partnership, is an appendix nobody reads twice.`, d:{goodwill:+8}, f:"hand", next:"tuesday" },
+      fail:{ text:`Both accept the split, and each drops by separately to explain why it is generous of him in particular. You now hold two IOUs of resentment, maturing at the next compensation round and bearing interest in the meantime. The ledger balances. Ledgers always balance; that is precisely what makes them useless here.`, d:{goodwill:+2, energy:-5}, next:"tuesday" } },
+    { label:`Radical discovery: ask the client who they think brought them in.`,
+      tag:"clients", dc:10,
+      success:{ text:`The chairman answers without a pause: \u201cNeither. We came because of the associate who untangled the escrow at midnight \u2014 is she available?\u201d You enter a third name in the origination ledger. The ledger has no field for this. You add one. Brack and Mortlake, united at last, agree that the question should never have been asked.`, d:{book:+6, goodwill:+4}, f:"people", next:"tuesday" },
+      fail:{ text:`\u201cAren't you all one firm?\u201d asks the chairman, genuinely puzzled \u2014 the most expensive sentence in professional services, and the truest. You report back. Both partners rule that the call never took place, and resume hostilities through the medium of calendar invitations.`, d:{energy:-4}, next:"tuesday" } },
+    { label:`Apply the house default: alphabetical order.`,
+      out:{ text:`Brack beams. Mortlake \u2014 a man alphabetically disadvantaged since birth and keeping score \u2014 responds within the hour with a two-page memorandum on the tyranny of the Latin alphabet, copied to nobody, which is how you know it matters. It is, you concede privately, rather well argued. You file it under precedents.`, d:{goodwill:+3, energy:-3}, next:"tuesday" } },
+  ]);
+},
+
+/* ---- Tuesday: conflicts ---- */
+tuesday(){
+  clear();
+  stampLine("TUESDAY · 10:30 · THE CONFLICTS DIVINATION");
+  narr("The Duchy of Meander wants Grimmwald & Finch for the dispute of the decade. The pitch would be a formality \u2014 they asked for you by name. Then the conflicts team runs the check and finds it: a small advisory mandate from 2011, for the other side, opened by a partner who retired to keep bees. Never closed. Technically alive. The dream mandate stands behind a locked gate, and the key is in an apiary.");
+  choices([
+    { label:`Ask conflicts to explore a waiver \u2014 with full candour, no pressure, and a genuinely gracious no-is-fine.`,
+      tag:"harmony", dc:12,
+      success:{ text:`Two honest phone calls and a carefully worded letter later, the 2011 client \u2014 who had frankly forgotten the mandate existed \u2014 grants the waiver and wishes the firm well. The gate opens because you knocked instead of rattling it. The beekeeping partner sends a jar of honey, unprompted.`, d:{book:+10, energy:-3}, next:"chapter" },
+      fail:{ text:`The waiver is declined \u2014 kindly, but firmly. You take the no with such grace that the 2011 client's general counsel makes a note of the firm's name for something else entirely. Doors close; hinges remember how they were treated.`, d:{goodwill:+5}, next:"chapter" } },
+    { label:`Refer the Duchy to your old friend at Thorn & Oak \u2014 with a warm note and no strings.`,
+      out:{ text:`"They'll take good care of you," you write, and mean it. Your friend calls that evening, half-suspicious, wholly touched. Referrals are the profession's currency of last resort and first respect \u2014 and they have a way of coming home. This one will, in about six months, carrying a different letterhead.`, d:{goodwill:+8, book:+3}, next:"chapter" } },
+    { label:`Take the 2011 client to lunch instead. Fifteen years of loyalty deserves better than being remembered as an obstacle.`,
+      tag:"clients", dc:9,
+      success:{ text:`Lunch runs long. It turns out the "dormant" client has three live problems and had assumed the firm was too grand for them now. By dessert, the small mandate that blocked the dream mandate has quietly become a better one. The conflicts team asks you to stop doing this; it confuses the database.`, d:{book:+6, goodwill:+4}, next:"chapter" },
+      fail:{ text:`A lovely lunch, no new work, and a long story about a boundary hedge. But he shakes your hand at the door a moment longer than necessary, and says "good of you to come yourself." Some ledger entries don't fit in the ledger.`, d:{goodwill:+4, energy:-3}, next:"chapter" } },
+  ]);
+},
+
+/* ---- Tuesday afternoon: the second edition ---- */
+chapter(){
+  clear();
+  stampLine("TUESDAY \u00b7 13:10 \u00b7 THE SECOND EDITION");
+  narr("Your co-editor calls, with the warmth of an old friend and the agenda of a creditor: the chapter for the second edition of the standard commentary \u2014 your chapter, promised in spring, extended in summer \u2014 is due Friday. Next week you are in three cities, two of them on purpose, so whatever is not written by Friday will not be written at all. The chapter is therefore competing for the one commodity this week has already sold twice: its evenings. The first edition sits on every desk in the field, which is precisely the problem: second editions are where reputations go to be audited.");
+  choices([
+    { label:`Write it yourself. Two late evenings and the small hours of Friday, the old way.`,
+      tag:"craft", dc:12,
+      success:{ text:`The chapter lands Friday at 23:51 \u2014 footnotes complete, opinions sharpened, and one heresy retained against the first edition's own position, which is the privilege of authors who update themselves. Somewhere around Thursday midnight it had clicked. Nobody billed these hours; the field will quote them for a decade without ever asking when they happened.`, d:{goodwill:+6, energy:-10}, next:"realisation" },
+      fail:{ text:`Two nights at the desk after the building has gone quiet, and at 02:00 on Friday the discovery that section IV now contradicts section II. You request an extension with a schoolboy's shame. The editor grants it the way editors do: kindly, promptly, and in writing, for the file.`, d:{energy:-12, goodwill:+2}, next:"realisation" } },
+    { label:`Four hands: the senior associate has been ready to co-author for two years. She drafts; you edit at dawn.`,
+      out:{ text:`You call her at 14:00. The draft arrives Thursday at 23:40 \u2014 thorough, current, and in two places braver than you would have been, which you keep. You add the war stories, change nine words, and submit it with both names on it. Her first footnote in the standard work. The chapter is better for four hands \u2014 and the title page now does what second editions are actually for: it trains the third.`, d:{goodwill:+5, energy:+2}, f:"people", next:"realisation" } },
+    { label:`Call the editor and say the true thing: not this time.`,
+      out:{ text:`The editor has heard every excuse invented since the first edition; the plain truth renders him briefly speechless. The chapter passes to an able colleague at another firm. In two years it will be excellent, much cited, and wearing someone else's name \u2014 which will sting precisely once a year, in the week the new edition ships. This week, however, you sleep, and the mandates get the lawyer they are paying for.`, d:{energy:+5}, next:"realisation" } },
+  ]);
+},
+
+/* ---- Tuesday evening: realisation ---- */
+realisation(){
+  clear();
+  stampLine("TUESDAY · 19:00 · THE REALISATION CALL");
+  narr("The firm's finance director calls about \u201crealisation\u201d \u2014 accounting's polite word for the distance between what was billed and what was paid. The Harbour Trust has paid sixty per cent of October's invoice and attached a note praising the \u201cconsistently excellent work\u201d, which is the commercial equivalent of applauding the kitchen while skipping out on dessert.");
+  choices([
+    { label:`Call their general counsel yourself. One question, no spreadsheet: what happened?`,
+      tag:"clients", dc:11,
+      success:{ text:`It takes four minutes: a new e-billing system, installed over the summer, has been auto-rejecting every block entry longer than six minutes \u2014 software, not displeasure. The missing forty per cent reappears within the month. The finance director is pleased and faintly disappointed; he had prepared slides.`, d:{book:+7, goodwill:+3}, next:"wednesday" },
+      fail:{ text:`\u201cWe love the work,\u201d says the general counsel, \u201cand we have a budget\u201d \u2014 the two oldest sentences in the client language, delivered in their traditional order. You agree a fee cap with dignity, and notice later that it fits your invoices precisely, the way a suit fits a man who has been measured without his knowledge.`, d:{book:+2, energy:-4}, next:"wednesday" } },
+    { label:`Pull the timesheet narratives and audit them yourself, before blaming anyone's software.`,
+      tag:"craft", dc:11,
+      success:{ text:`Row 212 solves it: one associate has billed fourteen entries reading \u201cattention to file\u201d. The file, consulted, shows no sign of having received any attention. You run a lunchtime seminar \u2014 \u201cwrite what you did, for the person paying for it\u201d \u2014 and realisation recovers two points by Christmas. The associate now writes narratives of forensic beauty. Fourteen a day.`, d:{book:+6, energy:-4}, next:"wednesday" },
+      fail:{ text:`The narratives are, on inspection, accurate. That is the problem. \u201c2.4 \u2014 consider counterparty's position\u201d is exactly what happened, for exactly that long, and no power on earth will make a client pay for it described that way. The work was real; the words were cheap. You draft a style guide at 23:00. The drafting is unbillable, which proves the style guide's point.`, d:{energy:-6}, next:"wednesday" } },
+    { label:`Write it off \u2014 with a letter so gracious the write-off reads as a gift.`,
+      out:{ text:`The letter goes out; the client all but frames it. The finance director books the sum to an account he has privately renamed \u201cinvestments in the relationship\u201d, which is where write-offs go to be forgiven. Eleven months from now, the Harbour Trust will send you the breakwater arbitration without holding a pitch. Nobody will connect the two events in writing. Everybody will connect them.`, d:{goodwill:+6, book:-2}, next:"wednesday" } },
+  ]);
+},
+
+/* ---- Wednesday: the resignation ---- */
+wednesday(){
+  clear();
+  stampLine("WEDNESDAY · 17:50 · A KNOCK");
+  tx(`<span class="spk">ELARA:</span> Do you have a minute?
+<span class="spk">YOU:</span> [You know this knock. Every partner learns this knock.]
+<span class="spk">ELARA:</span> I've been offered a position. In-house. I'm going to take it.`);
+  narr("Elara. Five years. The one who found the error in the opposing expert's model at midnight, twice. She stands in the doorway holding her own hands, braced for you to be disappointed \u2014 which tells you she cares what you think, which makes it worse and better at once.");
+  choices([
+    { label:`"Sit down. Not to change your mind \u2014 to hear it." And then actually listen.`,
+      tag:"people", dc:11,
+      success:{ text:`Forty minutes. It isn't the hours and it isn't the money \u2014 she wants to see decisions from the inside, not brief them from the outside. "Then go," you say, "learn everything, and remember we exist." She laughs, wet-eyed. Two years from now she'll be a general counsel who instructs exactly one firm without holding a beauty contest. You will pretend to be surprised.`, d:{goodwill:+6, book:+4}, f:"people", next:"wednesdaynight" },
+      fail:{ text:`You listen, and there is no version of this where she stays \u2014 the decision was made weeks ago; the knock was a courtesy. So you give her the only thing left to give: a blessing without a single "but". It costs more than a counteroffer and is worth more, too.`, d:{goodwill:+5}, f:"people", next:"wednesdaynight" } },
+    { label:`The blessing, immediately: "The door doesn't close behind you here. It doesn't even swing shut."`,
+      out:{ text:`Relief moves across her face like weather. You spend the minute you might have spent negotiating writing the warmest reference the firm's letterhead has ever carried. The alumni of Grimmwald & Finch are scattered across the kingdom's legal departments like seeds \u2014 which, a wiser partner once told you, is not attrition. It's planting.`, d:{goodwill:+6, energy:+3}, f:"people", next:"wednesdaynight" } },
+    { label:`Counteroffer on the spot. Some things can be fixed with equity points.`,
+      out:{ text:`She promises to think about it, and you both know what that means. Money is a precise answer, and she was asking an imprecise question \u2014 something about meaning, which the compensation committee does not administer. She'll go. But she'll go knowing her market value, which, you reflect, is also a parting gift of sorts.`, d:{book:+2, energy:-4}, next:"wednesdaynight" } },
+  ]);
+},
+
+/* ---- Wednesday night: the temptation ---- */
+wednesdaynight(){
+  clear();
+  stampLine("WEDNESDAY · 21:40 · AN OLD DOOR, AJAR");
+  narr("The office is empty. You're packing up when you see it in the day's mail: a genuinely beautiful limitation question, the kind with a trapdoor in it, sent by a client who apologises for how \u201cacademic\u201d it is. Twenty years ago this exact species of problem was the reason you joined. The correct managerial answer is obvious: delegate, go home. The old instrument, somewhere in you, is still in tune.");
+  choices([
+    { label:`Close the door. Make tea. Take the question apart yourself, the old way.`,
+      tag:"craft", dc:10,
+      success:{ text:`Two hours vanish like minutes. Somewhere around the third authority you catch yourself humming. The answer, when it comes, has the click of a well-made lock \u2014 and you sit for a moment in the lamplight, absurdly happy, a partner doing the work again and finding the joy unchanged. Nobody will bill this properly. That was never the point.`, d:{energy:-6, goodwill:+2}, f:"joy", next:"thursday" },
+      fail:{ text:`The trapdoor has a trapdoor. At 00:40 you're surrounded by open books like a student before exams, having proven only that the question deserves its reputation. You go home defeated and grinning, and dictate a note for the morning: "Interesting one. Let's dig properly." The old joy, it turns out, includes the losing.`, d:{energy:-12}, f:"joy", next:"thursday" } },
+    { label:`Send it to your best senior associate \u2014 with a voice note: "This one's a gift. Enjoy it."`,
+      out:{ text:`The reply lands at 22:15: "Ooh." Just that. You drive home smiling. Tomorrow there will be a memo on your desk that is better than the one you would have written, which stings for exactly four seconds and then feels like the whole purpose of the enterprise.`, d:{energy:+4, goodwill:+3}, f:"people", next:"thursday" } },
+    { label:`Park it for Saturday morning. Some problems deserve daylight.`,
+      out:{ text:`You put it in the folder labelled, honestly, "TREATS". Go home. The question will keep \u2014 limitation questions are, of all questions, the ones that understand about time.`, d:{energy:+3}, next:"thursday" } },
+  ]);
+},
+
+/* ---- Thursday: the pitch ---- */
+thursday(){
+  clear();
+  stampLine("THURSDAY · 09:00 · THE HARBOUR CONSORTIUM");
+  narr("A beauty contest, though everyone pretends not to call it that: the Harbour Consortium is choosing counsel for the harbour concession, and three firms present this morning. You've seen the panel: a procurement director with a stopwatch, and a general counsel who looks like she has already read everything and would like, for once, to be surprised.");
+  choices([
+    { label:`Bring the team and let them carry it. You open, then hand the room to the associates.`,
+      tag:"people", dc:11,
+      success:{ text:`Wren \u2014 week two \u2014 answers the general counsel's hardest question with a precision that makes the procurement director look up from the stopwatch. Afterwards the GC says, "The other firms brought partners who talked about their teams. You brought the team." The mandate letter arrives Monday. So, separately, does a note from Wren's mother, which you will keep.`, d:{book:+10, goodwill:+5}, f:"people", next:"aob" },
+      fail:{ text:`The team is good; the format is brutal \u2014 twenty minutes, no warm-up, and the panel's questions all land on the one topic you'd assigned to yourself. You improvise a relay that mostly works. Second place, with an invitation to pitch again next year, which is the procurement dialect for "we liked you."`, d:{book:+3, goodwill:+2}, next:"aob" } },
+    { label:`The craftsman's gambit: skip the credentials slides, answer their actual problem in the room, free of charge.`,
+      tag:"craft", dc:12,
+      success:{ text:`You put the concession's real weakness on the table \u2014 the step-in clause everyone has been politely not mentioning \u2014 and sketch the fix. The general counsel closes her folder, which turns out to be her highest compliment. "You're the only ones who read it," she says. The stopwatch was never started.`, d:{book:+12, energy:-4}, next:"aob" },
+      fail:{ text:`You answer their problem so completely that they can, for the moment, solve it without you. The general counsel is visibly grateful and visibly not mandating anyone this quarter. You have performed the rarest feat in professional services: the perfect pitch with no invoice attached. The firm's economists would weep. You feel oddly clean.`, d:{goodwill:+3}, next:"aob" } },
+    { label:`Play the classic: credentials, chemistry, and the story about the harbour case of '09.`,
+      tag:"clients", dc:10,
+      success:{ text:`The '09 story lands \u2014 the procurement director's predecessor was in it, which you knew, and the general counsel laughs once, genuinely, which the stopwatch does not capture but the decision will. Shortlisted, then chosen. Chemistry remains the one deliverable that cannot be procured.`, d:{book:+9}, next:"aob" },
+      fail:{ text:`Halfway through the story, the procurement director asks about panel rates. The general counsel apologises with her eyes. You finish gamely, quote responsibly, and leave with the polite applause of people who have already decided. Not every harbour is yours.`, d:{book:+2, energy:-4}, next:"aob" } },
+  ]);
+},
+
+/* ---- Thursday evening: agenda item seven ---- */
+aob(){
+  clear();
+  stampLine("THURSDAY · 19:40 · AGENDA ITEM SEVEN · ANY OTHER BUSINESS");
+  narr("The monthly partners' meeting arrives, at last, at the item the agenda calls Any Other Business \u2014 the partnership's traditional venue for the only business anyone actually came for. Tonight, under AOB: a proposal to modernise the firm's crest (\u201cthe griffin reads as hostile online\u201d), the matter of the office plants (an email chain, forty-one messages, the word \u201cscandal\u201d used twice), and \u2014 raised at the door handle, in the voice men reserve for small things \u2014 whether the lockstep \u201cmight bear discussion\u201d.");
+  narr("Three items. One grenade. The room, with the instinct of long practice, looks at you.");
+  choices([
+    { label:`Name the grenade: move that compensation be discussed properly \u2014 next month, with data, as item one.`,
+      tag:"harmony", dc:12,
+      success:{ text:`Carried without a vote, in the exhaled relief of men who have wanted this conversation for years and wanted, even more, not to be the one to start it. The lockstep will be debated in daylight, with numbers, where it belongs. The griffin survives another year. The plants are referred to a committee of their own, which is what the plants wanted all along.`, d:{goodwill:+8}, f:"hand", next:"friday" },
+      fail:{ text:`\u201cSince it's been raised,\u201d says the door handle \u2014 and the debate happens anyway: standing, coatless, for ninety minutes. Standing meetings were invented to keep meetings short. Partners' standing meetings have never heard of this. You get your proper agenda item in the end. You pay for it in posture.`, d:{goodwill:+3, energy:-6}, next:"friday" } },
+    { label:`Deploy the plants: twenty full minutes of ficus governance, until the appetite for revolution is spent.`,
+      out:{ text:`You give the plants the floor. Watering rota: debated, amended, minuted. Custody of the large ficus: resolved, one dissent noted for the record. By the time the flora is governed it is 20:15, and the room's hunger for structural reform has been entirely absorbed by the question of who overwatered the kentia. The lockstep lives. This is not avoidance; it is pacing. You tell yourself it is pacing.`, d:{goodwill:+4, energy:-3}, next:"friday" } },
+    { label:`The crest gambit: propose a design subcommittee \u2014 chaired, naturally, by the two loudest reformers.`,
+      out:{ text:`Seconded before you finish the sentence. The partnership's two most dangerous men now co-chair a standing committee about a drawing of a griffin, with a mandate to report \u201cwhen ready\u201d. They will not be ready for eighteen months, and they will be magnificent about it. Machiavelli wrote in Italian. Partnership politics is conducted in subcommittees.`, d:{goodwill:+5}, f:"hand", next:"friday" } },
+  ]);
+},
+
+/* ---- Friday: the succession lunch ---- */
+friday(){
+  clear();
+  stampLine("FRIDAY · 12:30 · LUNCH WITH OLD ALDRIC");
+  narr("Aldric. Forty years at the firm, and keeper of the firm's oldest client relationship \u2014 the Ironmongers, his since 1988. For nine years the partnership has murmured about \u201ctransition\u201d, and for nine years Aldric has explained that the relationship is \u201cvery personal\u201d. He is not wrong, which is the difficulty. He is also seventy-one, which is the other one. He ordered the fish before you sat down; he always orders for the table. It is infuriating and you will miss it terribly.");
+  choices([
+    { label:`Don't mention succession at all. Ask him to tell the story of how he won the Ironmongers.`,
+      tag:"harmony", dc:9,
+      success:{ text:`He tells it \u2014 the blizzard, the handshake, the invoice he tore up \u2014 and somewhere in the telling he hears it himself: a story with a shape, which means a story with an ending. Over coffee he says, unprompted, "The young ones should meet them properly. Set it up. I'll make the introductions myself." You have learned the deepest law of succession: nobody hands over a client. They hand over a story.`, d:{goodwill:+8, book:+6}, next:"recital" },
+      fail:{ text:`He tells it for two hours, with footnotes, and hands over nothing but the bill for the wine, magnanimously. And yet: walking back, he takes your arm at the crossing \u2014 he has never done that \u2014 and says, "You'd have liked practising back then." It is not a handover. It is, perhaps, the table of contents.`, d:{goodwill:+4, energy:-3}, next:"recital" } },
+    { label:`Propose the gentle machinery: a joint visit, both names on the letters, no deadlines.`,
+      out:{ text:`He studies you for a long moment over the fish. "Both names," he repeats, testing the weight of it, and finds it bearable. "No deadlines" was the key that fit \u2014 deadlines are for opponents. You leave with a plan so gradual it can barely be seen moving, which is the only speed at which forty years can be handed across a table.`, d:{goodwill:+5, book:+4}, next:"recital" } },
+    { label:`Let it rest another year. The fish is excellent and the man is seventy-one.`,
+      out:{ text:`You talk about his grandchildren, the state of advocacy, and whether the new courthouse has ruined the walk to court (it has, he rules, definitively). Nothing is transitioned, advanced, or aligned. It is the most useful lunch of the quarter by no metric the firm tracks, and you know it, and so \u2014 you suspect \u2014 does he.`, d:{energy:+3, goodwill:+2}, next:"recital" } },
+  ]);
+},
+
+/* ---- Friday evening: row three ---- */
+recital(){
+  clear();
+  stampLine("FRIDAY \u00b7 18:40 \u00b7 ROW THREE");
+  narr("Two commitments, one evening, zero overlap. At eight, across town: the closing dinner for the quarter's biggest deal \u2014 your deal, your clients, your toast. At seven, in a school auditorium: a twelve-year-old who has practised all autumn and will scan row three for one particular face. The calendar arranged this collision weeks ago. The calendar shows no remorse.");
+  choices([
+    { label:`Row three. Decline the dinner \u2014 and say why in plain words, not "a prior engagement".`,
+      out:{ text:`The general counsel reads your one-line apology aloud at the table and \u2014 you learn later \u2014 raises a glass "to the cello". The deal survives; deals signed at dinner were signed long before dinner. But on Monday, one of the other partners has quietly become the client's first call, and you knew that price when you chose the seat. The solo, for the record, was perfect. You were seen seeing it.`, d:{energy:+8, book:-3}, next:"retreat" } },
+    { label:`The dinner. The deal is once a quarter; there will be other concerts.`,
+      out:{ text:`The dinner is excellent, your toast lands, and the client tells the story of the 03:00 signing with you cast, flatteringly, as the calm one. Your phone holds one photo, sent at 19:42: a bow, mid-air, at the end of a solo you will hear described but never hear. "It went fine," says the twelve-year-old later, generously. "Fine" is doing work you taught it to do.`, d:{book:+8, energy:-6}, next:"retreat" } },
+    { label:`Both. First half, the solo, a taxi at the interval, arrive with the main course.`,
+      tag:"harmony", dc:12,
+      success:{ text:`The solo is at 19:20, the taxi at 19:41, and the main course has not yet reached the table when you sit down, breathing carefully. You heard the music and you made the toast, and nobody at either venue knows the full itinerary. The juggle worked. It does, sometimes \u2014 just rarely twice in a row, which is a fact worth writing somewhere you will find it again.`, d:{book:+5, energy:-8}, next:"retreat" },
+      fail:{ text:`The programme order changed; the solo moved to the second half. You are on the motorway when it happens and at the dinner when you find out, by text, between courses. Geography has taken both halves of the evening, and you come home to a house already asleep. Nobody is angry. That is the worst available outcome.`, d:{book:+3, energy:-10}, next:"retreat" } },
+  ]);
+},
+
+/* ---- Saturday: the retreat ---- */
+retreat(){
+  clear();
+  stampLine("SATURDAY · THE PARTNERS' RETREAT · A HOTEL WITH FLIPCHARTS");
+  narr("The annual gathering of the partnership: a conference hotel, a facilitator with laminated optimism, and an agenda item called \u201cVision 2035\u201d that was called \u201cVision 2030\u201d until recently. There are breakout groups. There are sticky notes. There is, tonight, a dinner at which the partnership will briefly remember that it is, underneath the ledgers, a fellowship. Your final task of the week: get them there intact.");
+  choices([
+    { label:`Take the strategy slot seriously \u2014 speak plainly about the one thing on everyone's mind that isn't on the agenda.`,
+      tag:"harmony", dc:11,
+      success:{ text:`You say the quiet thing \u2014 kindly, without a slide \u2014 and the room exhales. The facilitator abandons the laminate and lets the conversation actually happen; even the flipchart is used, at one point, for its true purpose. It will be remembered as the good retreat. Nobody will remember Vision 2035, which was always its destiny.`, d:{goodwill:+8}, next:"quiet" },
+      fail:{ text:`Your plain words are promptly broken into four breakout groups, summarised onto sticky notes, and reassembled into a slide that says "Key Takeaway: Communication." You watch your one true sentence be facilitated to death, and make peace with it, and eat a biscuit. Some dragons cannot be fought. Some can only be catered.`, d:{goodwill:+2, energy:-4}, next:"quiet" } },
+    { label:`Skip one breakout group. Walk the hotel grounds with the newest partner, who looks the way you felt at your first retreat.`,
+      out:{ text:`Half an hour among the disappointing topiary. She asks the question they all ask sooner or later \u2014 "when does it start feeling like you belong?" \u2014 and you give her the true answer: "It doesn't. One day you just notice you'd defend it." At dinner she sits straighter. The breakout group's flipchart, you learn later, concluded "synergies." It managed without you.`, d:{goodwill:+6, energy:+4}, f:"people", next:"quiet" } },
+  ]);
+},
+
+/* ---- Sunday: the quiet hour ---- */
+quiet(){
+  clear();
+  stampLine("SUNDAY · 18:00 · THE QUIET HOUR");
+  narr("Home. The week lies behind you like a crossed map: the Millwright, the ledger with three names, the locked gate, the second edition, Elara's knock, the question that hummed, the harbour pitch, the governed ficus, Aldric's blizzard, row three, the topiary. Tomorrow the inbox will have bred again \u2014 it is Sunday, it is already breeding. But for one hour the ledgers are closed, and you sit with the only question the partnership never puts on an agenda: what kind of week was that, really?");
+  contBtn("finale", "OPEN MONDAY'S CALENDAR \u25B8");
+},
+};
+
+/* ================= endings ================= */
+function finale(){
+  const p = S.flags.people||0;
+  const joy = !!S.flags.joy;
+  const sum = S.book + S.goodwill + S.energy;
+  if(p>=3) return ending("mentor");
+  if(joy) return ending("dungeon");
+  if((S.flags.hand||0)>=2 && S.goodwill>=60) return ending("hand");
+  if(S.goodwill>=85) return ending("mp");
+  if(sum>=175) return ending("happy");
+  return ending("steady");
+}
+
+function ending(kind){
+  const E = {
+    mentor:{ gold:true, seal:"THE MENTOR",
+      text:`Years from now, at a bar association dinner, you will look down the table and realise: the general counsel on your left, the judge across, the name partner at the rival firm who still sends you their hardest questions \u2014 all of them, once, knocked on your door holding their own hands.<br><br>Your book of business was never the ledger. It was the people, walking around the kingdom, carrying a little of the firm with them. The firm's economists have no column for this. The firm runs on it anyway.<br><br><b>ENDING: THE MENTOR \u2014 the rarest class, and the only one whose work compounds forever.</b>` },
+    dungeon:{ gold:true, seal:"SECOND CHAIR",
+      text:`Monday's calendar has a new entry, added by your own hand, recurring, protected: "CASE WORK \u2014 DO NOT MOVE." The partnership will raise an eyebrow. The clients will not \u2014 the clients, it turns out, rather like a partner who still does the work.<br><br>Next month there is a hearing. You will not lead it; Wren will, one day, but not yet \u2014 you'll sit second chair, carrying the bundle you know by heart, absurdly happy in a windowless room.<br><br><b>ENDING: SECOND CHAIR \u2014 you remembered why you chose it. Some promotions are best taken only partially.</b>` },
+    hand:{ gold:true, seal:"THE INVISIBLE HAND",
+      text:`Nothing at Grimmwald & Finch is decided in the partners' meeting. It is decided twenty minutes earlier, in the corridor, in a short conversation with you \u2014 and then discovered, collectively and with great satisfaction, around the table.<br><br>The ledger war ended in an appendix. The lockstep will be debated with data, in daylight. The crest subcommittee reports \u201cwhen ready\u201d, which is to say never, magnificently. No clause bears your name. Half the firm's peace does.<br><br><b>ENDING: THE INVISIBLE HAND \u2014 the partnership's thermostat. Nobody notices it. Everybody is comfortable.</b>` },
+    mp:{ gold:true, seal:"MANAGING PARTNER",
+      text:`It happens the way it always happens: quietly, over months, and then all at once at a partners' meeting where somebody says "well, it should obviously be you" and nobody disagrees, which in partnership law is a landslide.<br><br>You accept, on one condition, stated aloud and minuted: the door stays open, the coffees continue, and once a year \u2014 in writing \u2014 you get one week of pure case work, in a matter of your choosing. The partnership laughs and approves it unanimously, assuming you are joking. You are not. It's in the minutes.<br><br><b>ENDING: MANAGING PARTNER \u2014 the partnership chose well. Guard the calendar.</b>` },
+    happy:{ gold:true, seal:"HAPPY EQUITY",
+      text:`No drama. No title. Just this, which is rarer than either: a full book, a warm room, and enough left in the tank on Sunday evening to be pleased it's Monday tomorrow.<br><br>At the next retreat, the facilitator will ask the partners to describe the firm in one word. You will pass, smiling, because your word would take explaining: it's the sound the brass plate makes when you touch it on the way in. A kind of yes.<br><br><b>ENDING: HAPPY EQUITY \u2014 all three ledgers in the black, including the one nobody audits.</b>` },
+    steady:{ gold:true, seal:"STEADY HANDS",
+      text:`Not every week is a legend. This one was a week: things held, people were treated well, the mill keeps turning and the millwright knows your voice. The firm was built by exactly such weeks \u2014 thousands of them, laid like stones by partners whose names are now on doors they never made a fuss about.<br><br>On Monday, Wren will ask you a question in the corridor, and you will stop, and turn, and have the time. That, this week, was the achievement. It usually is.<br><br><b>ENDING: STEADY HANDS \u2014 the partnership's load-bearing wall. Firms fall without you.</b>` },
+    sabbatical:{ gold:false, seal:"GONE SAILING",
+      text:`It is Elara, of all people, who says it \u2014 gently, in the doorway, wearing her new in-house confidence: "You taught me to notice when someone's running on fumes. I'm noticing."<br><br>The partnership, to its lasting credit, does not negotiate. Three months. The firm survives; the inbox is redistributed; the Millwright sends a postcard TO you, which delights him enormously. Somewhere in week five, on actual water, you catch yourself solving a limitation question in your head \u2014 and laugh, and let it go, and trim the sail instead.<br><br><b>ENDING: GONE SAILING \u2014 energy reached zero, and the firm caught you. That's what partnerships are for.</b>` },
+  }[kind];
+
+  S.over = true;
+  clear();
+  stampLine("MINUTES · CLOSING ENTRY");
+  app.appendChild(el(`<div class="ending-seal ${E.gold?"gold":""}"><span>${E.seal}</span></div>`));
+  narr(E.text);
+  const cls = S.cls ? S.cls.nm : "PARTNER";
+  app.appendChild(el(`<p class="tx" style="text-align:center; color:var(--ink-soft);">CLOSING LEDGER · ${cls} · BOOK ${Math.max(0,S.book)} · GOODWILL ${Math.max(0,S.goodwill)} · ENERGY ${Math.max(0,S.energy)}</p>`));
+  const r = el(`<button class="restart">NEW FINANCIAL YEAR (PLAY AGAIN)</button>`);
+  r.addEventListener("click", ()=>{ S = freshState(); go("start"); });
+  app.appendChild(r);
+}
+
+/* ================= flow ================= */
+function go(id){
+  if(S.over) return;
+  if(id==="finale"){ finale(); return; }
+  SCENES[id]();
+}
+
+/* boot */
+S = freshState();
+go("start");
+</script>
+</body>
+</html>

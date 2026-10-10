@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRAVEL WEEK — Equity, Continued</title>
+<style>
+  :root{
+    --paper:#F6F2E8;
+    --paper-deep:#EDE7D8;
+    --ink:#23201A;
+    --ink-soft:#5A5445;
+    --navy:#1C2B45;
+    --brass:#9A7B33;
+    --seal:#7E2F35;
+    --seal-hi:#96424A;
+    --rule:#D6CDB6;
+    --serif:Georgia, "Times New Roman", serif;
+    --mono:"Courier New", Courier, ui-monospace, monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{background:var(--paper-deep);}
+  body{
+    font-family:var(--serif);
+    color:var(--ink);
+    background:var(--paper);
+    max-width:760px;
+    margin:0 auto;
+    min-height:100vh;
+    border-left:1px solid var(--rule);
+    border-right:1px solid var(--rule);
+    padding-bottom:80px;
+  }
+  .page{padding:28px 34px 0;}
+
+  /* ---------- letterhead ---------- */
+  header{
+    text-align:center;
+    padding:36px 30px 22px;
+    border-bottom:3px double var(--navy);
+  }
+  .eyebrow{font-family:var(--mono); font-size:10.5px; letter-spacing:.3em; color:var(--ink-soft); text-transform:uppercase;}
+  h1{
+    font-weight:normal;
+    font-size:clamp(26px,6vw,40px);
+    letter-spacing:.32em;
+    margin:16px 0 4px;
+    padding-left:.32em; /* optically center the letterspacing */
+    color:var(--navy);
+  }
+  .wilde{font-style:italic; font-size:13.5px; color:var(--ink-soft); margin-bottom:14px;}
+  .firm{
+    font-size:12.5px; line-height:1.8; color:var(--ink-soft);
+  }
+  .firm b{color:var(--ink); letter-spacing:.08em;}
+  .agenda{
+    display:inline-block; margin-top:14px; padding:3px 12px;
+    border:1px solid var(--brass); color:var(--brass);
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.18em;
+  }
+
+  /* ---------- status ledger ---------- */
+  #status{
+    position:sticky; top:0; z-index:20;
+    background:var(--navy); color:#EFE6CF;
+    font-family:var(--mono);
+    font-size:11px; letter-spacing:.08em;
+    padding:8px 34px;
+    display:flex; gap:18px; flex-wrap:wrap;
+    border-bottom:2px solid var(--brass);
+  }
+  #status .lbl{opacity:.75; margin-right:6px;}
+  #status .bar{letter-spacing:0;}
+  #status .warn{color:#E9B44C;}
+  #status .crit{color:#F09A8D;}
+
+  /* ---------- minutes ---------- */
+  .stamp-line{
+    margin:34px 0 10px;
+    font-family:var(--mono);
+    font-size:11px; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--ink-soft);
+    display:flex; align-items:center; gap:12px;
+  }
+  .stamp-line::after{content:""; flex:1; border-top:1px solid var(--rule);}
+  .narr{
+    font-size:17.5px; line-height:1.78;
+    margin:14px 0;
+  }
+  .tx{
+    font-family:var(--mono);
+    font-size:13.5px; line-height:1.8; margin:14px 0;
+    white-space:pre-wrap;
+  }
+  .tx .spk{font-weight:bold;}
+  .result{
+    border-left:3px solid var(--brass);
+    padding:10px 16px; margin:18px 0;
+    background:rgba(154,123,51,.07);
+    font-size:15.5px; line-height:1.75;
+  }
+  .result.bad{border-color:var(--seal); background:rgba(126,47,53,.06);}
+  .delta{font-family:var(--mono); font-size:11px; letter-spacing:.1em; color:var(--ink-soft); display:block; margin-top:8px;}
+  .delta .d-pos{color:#2E6B3F; font-weight:bold;}
+  .delta .d-neg{color:var(--seal); font-weight:bold;}
+
+  /* ---------- flying d20 ---------- */
+  .d20fly{ position:fixed; z-index:999; left:-130px; top:24vh;
+    width:96px; height:96px; pointer-events:none;
+    animation:d20x 1.05s cubic-bezier(.18,.65,.45,1) forwards; }
+  .d20arc{width:100%; height:100%; animation:d20y 1.05s linear forwards;}
+  .d20spin{width:100%; height:100%; animation:d20r 1.05s cubic-bezier(.2,.6,.3,1) forwards;
+           filter:drop-shadow(0 10px 12px rgba(0,0,0,.35));}
+  .d20spin svg{width:100%; height:100%; display:block;}
+  .d20fly.settled .d20spin svg{animation:d20wob .42s ease-out;}
+  .d20fly .num{ font-family:var(--mono); font-weight:bold; font-size:33px;
+    fill:#E9C96A; stroke:#10182A; stroke-width:3px; paint-order:stroke; }
+  @keyframes d20x{ from{transform:translateX(0);} to{transform:translateX(calc(50vw + 80px));} }
+  @keyframes d20y{
+    0%  {transform:translateY(-120px) scale(1,1);}
+    26% {transform:translateY(150px)  scale(1.06,.9);}
+    30% {transform:translateY(140px)  scale(1,1);}
+    48% {transform:translateY(40px)   scale(1,1);}
+    64% {transform:translateY(150px)  scale(1.05,.92);}
+    68% {transform:translateY(144px)  scale(1,1);}
+    80% {transform:translateY(108px)  scale(1,1);}
+    90% {transform:translateY(150px)  scale(1.03,.95);}
+    100%{transform:translateY(150px)  scale(1,1);}
+  }
+  @keyframes d20r{ from{transform:rotate(0deg);} to{transform:rotate(720deg);} }
+  @keyframes d20wob{ 0%{transform:rotate(0deg);} 35%{transform:rotate(-7deg);}
+    65%{transform:rotate(4deg);} 100%{transform:rotate(0deg);} }
+  @media (prefers-reduced-motion: reduce){ .d20fly{display:none;} }
+
+  /* ---------- choices ---------- */
+  .choices{margin:22px 0 8px;}
+  .choice{
+    display:block; width:100%;
+    text-align:left;
+    font-family:var(--serif); font-size:15.5px; line-height:1.6;
+    background:none; border:1px solid var(--rule);
+    border-left:4px solid var(--navy);
+    padding:12px 16px; margin:10px 0;
+    cursor:pointer; color:var(--ink);
+    transition:background .12s, border-color .12s;
+  }
+  .choice:hover:not(:disabled){background:#fff; border-left-color:var(--brass);}
+  .choice:focus-visible{outline:2px solid var(--seal); outline-offset:2px;}
+  .choice:disabled{opacity:.45; cursor:not-allowed;}
+  .choice .tagline{display:block; font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; color:var(--ink-soft); margin-top:6px; text-transform:uppercase;}
+
+  /* ---------- wax seal (dice) ---------- */
+  .diebox{min-height:110px; display:flex; align-items:center; margin:20px 0;}
+  .die-seal{
+    width:96px; height:96px; border-radius:50%;
+    background:radial-gradient(circle at 34% 28%, var(--seal-hi), var(--seal) 65%);
+    color:#F3E3C8;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    transform:rotate(-5deg);
+    box-shadow:inset 0 0 0 4px rgba(243,227,200,.25), inset 0 0 18px rgba(0,0,0,.35), 0 2px 4px rgba(0,0,0,.2);
+  }
+  .die-seal .big{font-size:32px; font-weight:bold; letter-spacing:.03em;}
+  .die-seal .small{font-family:var(--mono); font-size:8.5px; letter-spacing:.14em; margin-top:2px; text-align:center; padding:0 8px;}
+  @keyframes press{
+    0%{transform:rotate(-5deg) scale(1.7); opacity:0;}
+    70%{transform:rotate(-5deg) scale(.95); opacity:1;}
+    100%{transform:rotate(-5deg) scale(1);}
+  }
+  .die-seal.press{animation:press .35s ease-out;}
+  @media (prefers-reduced-motion: reduce){
+    .die-seal.press{animation:none;}
+  }
+
+  /* ---------- archetype cards ---------- */
+  .classes{margin:20px 0;}
+  .cls{
+    display:block; width:100%; text-align:left;
+    font-family:var(--serif);
+    border:1px solid var(--rule); background:none;
+    padding:14px 18px; margin:12px 0; cursor:pointer; color:var(--ink);
+    transition:background .12s;
+  }
+  .cls:hover{background:#fff;}
+  .cls:focus-visible{outline:2px solid var(--seal); outline-offset:2px;}
+  .cls .nm{font-family:var(--mono); font-size:13.5px; font-weight:bold; letter-spacing:.1em; color:var(--navy);}
+  .cls .rl{font-size:15.5px; color:var(--ink-soft); display:block; margin:6px 0 5px; line-height:1.6;}
+  .cls .bn{font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; color:var(--brass); text-transform:uppercase;}
+
+  /* ---------- continue & endings ---------- */
+  .cont{
+    display:block; margin:20px auto 6px;
+    font-family:var(--mono); font-size:12px; letter-spacing:.18em;
+    background:none; border:1px solid var(--navy); color:var(--navy);
+    padding:10px 24px; cursor:pointer;
+    transition:background .12s, color .12s;
+  }
+  .cont:hover{background:var(--navy); color:var(--paper);}
+  .cont:focus-visible{outline:2px solid var(--seal); outline-offset:2px;}
+
+  .ending-seal{text-align:center; margin:36px 0 8px;}
+  .ending-seal span{
+    display:inline-block;
+    border:4px solid var(--seal); color:var(--seal);
+    font-family:var(--mono);
+    font-size:clamp(16px,4vw,24px); font-weight:bold; letter-spacing:.2em;
+    padding:14px 26px; transform:rotate(-3deg);
+    text-transform:uppercase;
+  }
+  .ending-seal.gold span{border-color:var(--brass); color:var(--brass);}
+  .restart{
+    display:block; margin:34px auto 0;
+    font-family:var(--mono); font-size:13px; letter-spacing:.12em;
+    background:var(--navy); color:#EFE6CF;
+    border:none; padding:12px 26px; cursor:pointer;
+  }
+  .restart:hover{background:#111D33;}
+
+  footer{
+    margin-top:60px; padding:20px 30px 0;
+    border-top:1px solid var(--rule);
+    font-family:var(--mono);
+    font-size:10px; letter-spacing:.12em; color:var(--ink-soft);
+    text-align:center; line-height:1.9;
+  }
+  @media (max-width:520px){
+    .page{padding:22px 18px 0;}
+    header{padding:28px 16px 18px;}
+    #status{padding:8px 18px; gap:10px;}
+    footer{padding:20px 16px 0;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">An Itinerary in Five Days · Three Cities · Four Airports</div>
+  <h1>TRAVEL WEEK</h1>
+  <div class="wilde">Equity, Continued — A Trivial Comedy for People in Transit</div>
+  <div class="firm">
+    <b>GRIMMWALD &amp; FINCH LLP</b><br>
+    Attorneys at Law · est. 1897<br>
+    <span style="font-style:italic;">"The suitcase is a solved problem. This week is about everything the suitcase cannot hold."</span>
+  </div>
+  <div class="agenda">FRIDAY · 19:00 · TABLE FOR TWO — DO NOT MOVE</div>
+</header>
+
+<div id="status" hidden>
+  <span class="meter"><span class="lbl">STANDING</span><span class="bar" id="m-st"></span></span>
+  <span class="meter"><span class="lbl">ENERGY</span><span class="bar" id="m-en"></span></span>
+  <span class="meter"><span class="lbl">HOME</span><span class="bar" id="m-ho"></span></span>
+  <span class="meter"><span class="lbl">BODY</span><span class="bar" id="m-jet"></span></span>
+</div>
+
+<main class="page" id="app" aria-live="polite"></main>
+
+<footer>
+  THE SEQUEL TO "EQUITY" · FOR PACKING, SEE "CONFERENCE KIT" — THIS IS NOT THAT GAME<br>
+  ALL AIRLINES FICTIONAL, ALL DELAYS REAL · THE BODY CLOCK NEVER LIES, IT ONLY DISSENTS
+</footer>
+
+<script>
+"use strict";
+
+/* ================= state ================= */
+let S = null;
+function freshState(){
+  return { cls:null, standing:55, energy:60, home:50, jet:0, flags:{}, over:false };
+}
+
+/* ================= archetypes ================= */
+const CLASSES = [
+  { id:"rainmaker", nm:"THE RAINMAKER", bonus:{clients:3},
+    rl:"Can charm a mandate out of a stone. Knows every lounge agent's first name, in four alliances.",
+    bn:"+3 on CLIENT checks" },
+  { id:"craftsman", nm:"THE CRAFTSMAN", bonus:{craft:3},
+    rl:"Made partner by accident, on merit. Treats a thirteen-hour flight as a reading room with catering.",
+    bn:"+3 on CRAFT checks" },
+  { id:"mentor", nm:"THE MENTOR", bonus:{people:3},
+    rl:"Half the associates list them, privately, as the reason they stayed. Delegates like it is a love language.",
+    bn:"+3 on PEOPLE checks" },
+  { id:"diplomat", nm:"THE DIPLOMAT", bonus:{harmony:3},
+    rl:"Has never once lost their temper at a gate. Gate agents sense this, and upgrade accordingly.",
+    bn:"+3 on HARMONY checks" },
+];
+function bonusFor(tag){
+  if(!S.cls || !tag) return 0;
+  return S.cls.bonus[tag] || 0;
+}
+
+/* ================= helpers ================= */
+const app = document.getElementById("app");
+const statusBar = document.getElementById("status");
+
+function bar(v){
+  const n = Math.max(0, Math.min(10, Math.round(v/10)));
+  return "█".repeat(n) + "░".repeat(10-n) + " " + Math.max(0,v);
+}
+function jetPen(){ return S.jet>=7?3:S.jet>=4?2:0; }
+function paintStatus(){
+  const st=document.getElementById("m-st"),
+        e=document.getElementById("m-en"),
+        h=document.getElementById("m-ho"),
+        jl=document.getElementById("m-jet");
+  st.textContent = bar(S.standing);
+  e.textContent = bar(S.energy);
+  h.textContent = bar(S.home);
+  const p=jetPen();
+  jl.textContent = p?("JET LAG −"+p):"ADJUSTING";
+  st.className = "bar " + (S.standing<=20?"crit":S.standing<=40?"warn":"");
+  e.className = "bar " + (S.energy<=20?"crit":S.energy<=40?"warn":"");
+  h.className = "bar " + (S.home<=20?"crit":S.home<=40?"warn":"");
+  jl.className = "bar " + (p>=3?"crit":p>=2?"warn":"");
+}
+function apply(d){
+  if(!d) return "";
+  const parts=[];
+  const tint=(l,v,badUp)=>`<span class="${(badUp?v<0:v>0)?"d-pos":"d-neg"}">${l} ${fmt(v)}</span>`;
+  if(d.standing){ S.standing=Math.min(100,S.standing+d.standing); parts.push(tint("STANDING",d.standing)); }
+  if(d.energy){ S.energy=Math.min(100,S.energy+d.energy); parts.push(tint("ENERGY",d.energy)); }
+  if(d.home){ S.home=Math.min(100,S.home+d.home); parts.push(tint("HOME",d.home)); }
+  if(d.jet){ S.jet=Math.max(0,Math.min(10,S.jet+d.jet)); parts.push(tint("JET LAG",d.jet,true)); }
+  paintStatus();
+  return parts.join(" · ");
+}
+function fmt(n){ return (n>0?"+":"")+n; }
+function el(html){ const t=document.createElement("template"); t.innerHTML=html.trim(); return t.content.firstChild; }
+function clear(){ app.innerHTML=""; window.scrollTo({top:0}); }
+function stampLine(txt){ app.appendChild(el(`<div class="stamp-line">${txt}</div>`)); }
+function narr(txt){ app.appendChild(el(`<p class="narr">${txt}</p>`)); }
+function tx(txt){ app.appendChild(el(`<div class="tx">${txt}</div>`)); }
+function checkDeath(){
+  if(S.energy<=0){ ending("grounded"); return true; }
+  return false;
+}
+
+const DIE_SND="data:audio/mpeg;base64,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qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqoCBHHX/w5qmwPhsZ+aURGai5kgkYqKmDDgUGDAQcWABoCR9UCaSvpR1o7XHnhImFJEIRooTnmmUSEiGTpA25qMrrNjKKxCIhkPkCNz4+UbLLLLUMjJrJ////L2S/kyhgQNHIya/srWWkZfLJf9lBRy//tYxOMDzmlg+A2Ya8oJr9yBlhkx+yyf+ahgwNHSyyf+ayOhkasFCwxKrFNMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//tYxL2D0N18qK2kcQgAADSAAAAEVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV";
+let _dieAudio=null;
+function dieSound(){
+  try{
+    _dieAudio = _dieAudio || new Audio(DIE_SND);
+    const a=_dieAudio.cloneNode();
+    a.volume=0.6;
+    const p=a.play(); if(p&&p.catch) p.catch(()=>{});
+  }catch(e){}
+}
+function flyD20(nat, done){
+  const reduce = typeof window.matchMedia==="function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(reduce){ done(); return; }
+  const fly=document.createElement("div"); fly.className="d20fly"; fly.setAttribute("aria-hidden","true");
+  fly.innerHTML=`<div class="d20arc"><div class="d20spin">
+    <svg viewBox="0 0 100 100">
+      <defs><linearGradient id="d20face" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#2A3550"/><stop offset="1" stop-color="#121A2C"/></linearGradient></defs>
+      <polygon points="50,3 91,26 91,74 50,97 9,74 9,26" fill="url(#d20face)" stroke="#B08D3E" stroke-width="2.6" stroke-linejoin="round"/>
+      <polygon points="50,16 82,70 18,70" fill="rgba(255,255,255,.055)" stroke="#B08D3E" stroke-width="1.6" stroke-linejoin="round" opacity=".95"/>
+      <polygon points="50,3 91,26 82,70 50,16" fill="rgba(0,0,0,.16)"/>
+      <polygon points="50,3 9,26 18,70 50,16" fill="rgba(255,255,255,.05)"/>
+      <polygon points="9,74 50,97 50,16 18,70" fill="rgba(0,0,0,.08)" opacity=".5"/>
+      <line x1="50" y1="3" x2="50" y2="16" stroke="#B08D3E" stroke-width="1.6"/>
+      <line x1="91" y1="26" x2="82" y2="70" stroke="#B08D3E" stroke-width="1.2" opacity=".7"/>
+      <line x1="9" y1="26" x2="18" y2="70" stroke="#B08D3E" stroke-width="1.2" opacity=".7"/>
+      <line x1="91" y1="74" x2="82" y2="70" stroke="#B08D3E" stroke-width="1.6"/>
+      <line x1="9" y1="74" x2="18" y2="70" stroke="#B08D3E" stroke-width="1.6"/>
+      <polyline points="12,28 50,7 88,28" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="1.4"/>
+      <text class="num" x="50" y="61" text-anchor="middle"></text>
+    </svg></div></div>`;
+  document.body.appendChild(fly);
+  const numEl=fly.querySelector(".num");
+  dieSound();
+  const flick=setInterval(()=>{ numEl.textContent=1+Math.floor(Math.random()*20); },75);
+  setTimeout(()=>{
+    clearInterval(flick);
+    numEl.textContent=nat;
+    fly.classList.add("settled");
+    if(nat===20) numEl.setAttribute("fill","#FFD700");
+    if(nat===1)  numEl.setAttribute("fill","#E0524A");
+    setTimeout(()=>{ fly.remove(); done(); },640);
+  },1050);
+}
+/* the die rolls across the minutes; the seal records the verdict */
+function rollDie(tag, cb){
+  const box = el(`<div class="diebox"></div>`);
+  app.appendChild(box);
+  const nat = 1 + Math.floor(Math.random()*20);
+  const b = bonusFor(tag);
+  const p = jetPen();
+  const total = nat + b - p;
+  flyD20(nat, ()=>{
+    let lbl = b ? `${nat} ${b>0?"+":""}${b} ${tag.toUpperCase()}` : `D20: ${nat}`;
+    if(p) lbl += ` − ${p} JET LAG`;
+    box.appendChild(el(
+      `<div class="die-seal press" role="status">
+        <span class="big">${total}</span>
+        <span class="small">${lbl}${nat===20?" · NAT 20":""}${nat===1?" · NAT 1":""}</span>
+      </div>`));
+    setTimeout(()=>cb(total, nat), 500);
+  });
+}
+
+function choices(list){
+  const wrap = el(`<div class="choices"></div>`);
+  list.forEach(c=>{
+    const btn = el(`<button class="choice">${c.label}${c.tag?`<span class="tagline">${c.tag.toUpperCase()} CHECK · DC ${c.dc}</span>`:(c.tagline?`<span class="tagline">${c.tagline}</span>`:"")}</button>`);
+    btn.addEventListener("click", ()=>{
+      wrap.querySelectorAll("button").forEach(b=>b.disabled=true);
+      btn.style.borderLeftColor="var(--brass)";
+      if(c.tag){
+        rollDie(c.tag,(total,nat)=>{
+          const ok = nat===20 ? true : nat===1 ? false : total>=c.dc;
+          const out = ok?c.success:c.fail;
+          showResult(out, ok);
+          if(checkDeath()) return;
+          contBtn(out.next);
+        });
+      } else if(c.out){
+        showResult(c.out, !c.out.bad);
+        if(checkDeath()) return;
+        contBtn(c.next || c.out.next);
+      } else {
+        go(c.next);
+      }
+    });
+    wrap.appendChild(btn);
+  });
+  app.appendChild(wrap);
+}
+function showResult(out, ok){
+  if(out.f){ S.flags[out.f]=(S.flags[out.f]||0)+1; }
+  const deltas = apply(out.d);
+  app.appendChild(el(
+    `<div class="result ${ok?"":"bad"}">${out.text}${deltas?`<span class="delta">${deltas}</span>`:""}</div>`));
+  app.lastChild.scrollIntoView?.({behavior:"smooth", block:"nearest"});
+}
+function contBtn(next, label){
+  const b = el(`<button class="cont">${label || "CONTINUE \u25B8"}</button>`);
+  b.addEventListener("click", ()=>{ go(next); });
+  app.appendChild(b);
+  b.scrollIntoView?.({behavior:"smooth", block:"nearest"});
+}
+
+/* ================= scenes ================= */
+const SCENES = {
+
+start(){
+  clear();
+  statusBar.hidden = true;
+  stampLine("SUNDAY · HOME · 21:40 · THE ITINERARY");
+  narr("The kitchen table. The itinerary, printed — you still print itineraries; it is the profession\u2019s last devotional act. Three cities, four airports, two boards, one keynote. The suitcase stands by the door, packed and uncontroversial. The suitcase has never been the problem.");
+  narr("On the fridge, in handwriting that has recently acquired opinions: \u201cFRIDAY 19:00. TABLE FOR TWO. You promised.\u201d You did. The restaurant was booked the day after last quarter\u2019s apology, which makes Friday less a reservation than a settlement agreement.");
+  narr("Who flies out tomorrow?");
+  const wrap = el(`<div class="classes"></div>`);
+  CLASSES.forEach(c=>{
+    const b = el(`<button class="cls"><span class="nm">${c.nm}</span><span class="rl">${c.rl}</span><span class="bn">${c.bn}</span></button>`);
+    b.addEventListener("click", ()=>{
+      S.cls = c;
+      statusBar.hidden = false;
+      paintStatus();
+      go("flight");
+    });
+    wrap.appendChild(b);
+  });
+  app.appendChild(wrap);
+},
+
+/* ---- Monday: the long day west ---- */
+flight(){
+  clear();
+  stampLine("MONDAY · DEP 11:55 HOME · ARR 15:55 LOCAL · THE LONG MONDAY");
+  narr("Thirteen hours west. The captain announces a flight time with the pride of a man personally pushing the aircraft, and the map on the seatback begins its slow crawl over Greenland. Today will last thirty-three hours. Nobody on board seems alarmed by this except your calendar.");
+  narr("Thirteen hours, no calls, no door, no corridor: the last room on earth where nobody can reach you. You would defend this room with your life, and have, at check-in.");
+  choices([
+    { label:`Build the week: Caldera board papers, keynote skeleton, Zurich deck. One block each, no mercy.`,
+      tag:"craft", dc:11,
+      success:{ text:`Three blocks, three documents, one apple juice. By the descent, Tuesday is armed, Thursday has a spine, and Friday has numbers. Working at altitude remains the purest form of the craft: no interruptions, no billing codes, just the work and the curvature of the earth.`, d:{standing:+5, energy:-4, jet:+2}, f:"altwork", next:"bardinner" },
+      fail:{ text:`Seat 3B contains a man who \u201csees you do arbitration\u201d \u2014 a sentence with a nine-hour wingspan. He has views on the New York Convention. They are wrong in ways that take time to establish. You land with one block done and a business card you will not keep.`, d:{standing:+2, energy:-8, jet:+2}, next:"bardinner" } },
+    { label:`Sleep now, against every instinct. Land rested into the evening shift.`,
+      out:{ text:`Four hours of disciplined unconsciousness into a Californian afternoon. Your body files the first of what will be several formal objections this week, citing the position of the sun. You overrule it. You will not always be able to.`, d:{energy:+6, jet:+1}, next:"bardinner" } },
+    { label:`Clear the family admin: the permission slip, the dentist, and a reply in capitals to \u201care you coming Friday?\u201d`,
+      out:{ text:`Somewhere over Greenland you resolve the dentist. The in-flight Wi-Fi charges \u20ac21 and earns every cent: the reply to Friday\u2019s question reads \u201cYES. BOOKED. BOTH KINDS.\u201d, and the thumbs-up that comes back is, by the only exchange rate that matters this week, the best billing realisation you will achieve for days.`, d:{home:+8, jet:+2}, next:"bardinner" } },
+  ]);
+},
+
+/* ---- Monday night: the dinner with a bar ---- */
+bardinner(){
+  clear();
+  stampLine("MONDAY · LOCAL 19:30 · BODY 04:30 · THE DINNER WITH A BAR");
+  narr("Caldera Systems \u2014 whose board you address at nine tomorrow \u2014 has booked dinner. The restaurant has a bar, the bar has a view, and the view has a second round. Your host is on home time, delighted, and ordering; your body is at half past four in the morning, standing in the wreckage of its routine, asking quietly what happened.");
+  choices([
+    { label:`Leave at 21:30. Tomorrow owns tonight.`,
+      out:{ text:`The client walks you out, warm and slightly disappointed; the second round happens without you and will be quoted at you for years, affectionately. Discipline has a price, and the price is always a story you are not in.`, d:{energy:+5, standing:-2}, next:"call" } },
+    { label:`Stay. The bar has a view, the client has stories, the week has to start somewhere.`,
+      out:{ text:`Bed at 02:00 local \u2014 which is 11:00 at home. By the only clock your body actually owns, you have just pulled an all-nighter in black tie, and the body has written this down, in ink, for later. But the client told the story about the founder and the forklift, and told it to you, which tomorrow will be worth something no slide can buy.`, d:{standing:+6, energy:-7, jet:+3}, f:"forklift", next:"call" } },
+    { label:`The travelling lawyer\u2019s gambit: water in the wine glass, one strategic espresso at 22:00, vanish at 23:30.`,
+      tag:"harmony", dc:12,
+      success:{ text:`Cast clean. The espresso deploys like a flare, the water passes for riesling, and your exit at 23:30 is so smooth that nobody can later say when it happened \u2014 only that you were, at all relevant times, present. The oldest spell in the travelling lawyer\u2019s grimoire, and tonight it holds.`, d:{standing:+4, energy:-2, jet:+1}, next:"call" },
+      fail:{ text:`The bartender, a professional, honestly refills what you had been discreetly diluting. You are discovered at 00:40, toasted for it \u2014 \u201cto counsel\u2019s water!\u201d \u2014 and kept until two out of pure affection. There are worse ways to lose. There are no cheaper ones.`, d:{standing:+4, energy:-6, jet:+3}, next:"call" } },
+  ]);
+},
+
+/* ---- Tuesday small hours: the injunction ---- */
+call(){
+  clear();
+  stampLine("TUESDAY · LOCAL 03:40 · BODY 12:40 · THE CALL");
+  narr("The phone, face-down, lights the ceiling anyway. At home it is lunchtime, and lunch has arrived with process attached: the Harbour Trust injunction, served this morning, nine time zones away. Your body, for once, entirely agrees with the situation: it is wide awake, mildly hungry, and ready to litigate.");
+  choices([
+    { label:`One text to Wren: \u201cYour call. Brief me at my 07:00.\u201d Then back to sleep, deliberately.`,
+      out:{ text:`Her reply arrives in ninety seconds: a numbered list, half of it already executed. You put the phone down and sleep \u2014 actually sleep \u2014 to the rarest lullaby in the profession: competence, elsewhere, requiring nothing. At 07:00 the briefing takes six minutes. The firm has been training her for years. So, you realise, have you.`, d:{energy:+4}, f:"people", next:"board1" } },
+    { label:`Take it. Ninety minutes, hotel desk, complimentary notepad.`,
+      out:{ text:`By 05:10 the hotel notepad holds a response strategy, a hearing timeline, and the beginnings of an argument the other side will not enjoy. Breakfast tastes of victory and complimentary paper. The morning, however, has been spent before it started, and the board meets at nine.`, d:{standing:+5, energy:-8, jet:+2}, next:"board1" } },
+    { label:`Read the order yourself \u2014 one page of advice, then hand it over whole.`,
+      tag:"craft", dc:12,
+      success:{ text:`Forty minutes, one page: what it means, what it does not, the two deadlines that matter and the one that only looks like it does. You send it, assign it, and sleep the sleep of a lawyer whose one-pager will be quoted back to him, correctly, by Thursday.`, d:{standing:+5, energy:-4, jet:+1}, next:"board1" },
+      fail:{ text:`The one-pager becomes three, the way one-pagers do at 04:00 in a hotel. All three pages are right; none of them is short; and the sunrise catches you mid-footnote, a continent from your citations. You send it anyway. Wren\u2019s reply \u2014 \u201cgot it, boss, sleep\u201d \u2014 is the best advice billed to the file all week.`, d:{standing:+2, energy:-8, jet:+2}, next:"board1" } },
+  ]);
+},
+
+/* ---- Tuesday morning: mission one ---- */
+board1(){
+  clear();
+  stampLine("TUESDAY · LOCAL 09:00 · BODY 17:40 · MISSION ONE: THE CALDERA BOARD");
+  narr("The boardroom has a view of the bay and a director who flew in from Singapore specifically to be sceptical. You rise to speak \u2014 and discover the week\u2019s one free gift: your body believes it is late afternoon. Alert. Fluent. Suspiciously so. Jet lag, briefly, is on your side. It will invoice you at three o\u2019clock.");
+  choices([
+    { label:`Drop the slides. Talk to the sceptical director as if the two of you were alone.`,
+      tag:"clients", dc:12,
+      success:{ text:`Eleven minutes in, the Singapore director asks the hard question he brought across an ocean. You answer it with the fact he did not expect you to know \u2014 ${S.flags.altwork?"from the board papers built at eleven thousand metres":"from the briefing devoured at 05:10 over the hotel\u2019s first coffee, the insomnia correctly invoiced for once"}. He nods once, which from him is a press release. Mission one, delivered. At 15:00 the wall arrives on schedule \u2014 midnight at home \u2014 but by then you are already back at the hotel, grinning at the ceiling.`, d:{standing:+8}, f:"m", next:"redeye" },
+      fail:{ text:`The conversation works until 15:00, at which point \u2014 midnight, by the clock that matters \u2014 the wall arrives mid-sentence and removes three words from your vocabulary, including, briefly, \u201cindemnity\u201d. The board is gracious. The Singapore director finishes your sentence for you, correctly, which is both a rescue and a receipt.`, d:{standing:+3, energy:-6}, next:"redeye" } },
+    { label:S.flags.altwork?`Run the deck built over Greenland. Trust Monday\u2019s work at altitude.`:`Run the deck \u2014 assembled overnight at the hotel desk, seams and all.`,
+      tag:"craft", dc:12,
+      success:{ text:`The deck holds like good masonry: every question lands on a slide that was already waiting for it. \u201cYou\u2019ve done this before,\u201d says the chair, approvingly. You have${S.flags.altwork?" \u2014 on Monday, over Greenland, in the one room nobody could reach":" \u2014 at 23:40 and again at 05:00, which the chair does not need to know"}. Mission one, delivered.`, d:{standing:+7}, f:"m", next:"redeye" },
+      fail:{ text:`Slide eleven contains Tuesday\u2019s date in Wednesday\u2019s format, and the Singapore director \u2014 who audits for sport \u2014 finds it like a truffle pig. The substance survives; the morning is spent re-earning the benefit of the doubt a hyphen lost.`, d:{standing:+2, energy:-5}, next:"redeye" } },
+    { label:`Open by giving the floor to their own GC first. People defend plans they helped build.`,
+      tag:"people", dc:12,
+      success:{ text:`The GC frames the problem; you frame the answer; the board watches its own lawyer and your firm finish each other\u2019s reasoning like an old duet. The sceptical director has nothing to be sceptical about \u2014 the plan is already half theirs. Mission one, delivered, with a co-author.`, d:{standing:+6}, f:"m", next:"redeye" },
+      fail:{ text:`The GC, given the floor, keeps it \u2014 for forty minutes, two org charts, and a grievance about procurement. Your twenty minutes become nine. They are a good nine. Nine is not twenty.`, d:{standing:+3, energy:-4}, next:"redeye" } },
+  ]);
+},
+
+/* ---- Tuesday night: the redeye east ---- */
+redeye(){
+  clear();
+  stampLine("TUESDAY · LOCAL 19:40 · BODY: UNDECIDED · THE REDEYE");
+  narr("SFO to London, ten hours, against the spin of the earth. The flight attendant offers champagne with the solemnity of a last rite. Eastbound is the one that hurts: tonight you will be robbed of eight hours in your sleep, lawfully, by timetable. How do you spend the flight?");
+  choices([
+    { label:`Flat bed, eye mask, discipline. London is tomorrow\u2019s problem.`,
+      out:{ text:`Five hours of sleep over the Atlantic, which counts as a triumph of character and is logged as such. You land into a London afternoon merely confused rather than ruined. The body notes the effort and reduces its claim, without prejudice.`, d:{energy:+4, jet:+2}, next:"confdinner" } },
+    { label:`The Zurich deck will never get a quieter ten hours. Work the night.`,
+      tag:"craft", dc:12,
+      success:{ text:`Somewhere over Iceland the Zurich argument finds its final shape \u2014 three moves, one page each, nothing ornamental. You close the laptop at 04:00 body time with the deep, illegal satisfaction of work done in stolen hours. The body opens a file on you. It can queue.`, d:{standing:+5, energy:-8, jet:+4}, f:"icework", next:"confdinner" },
+      fail:{ text:`At 04:00 body time, somewhere over Iceland, you notice slide fourteen contains the word \u201csynergy\u201d. You delete it, shaken, and close the laptop \u2014 too late: the night is gone and the deck is only half a deck. Altitude forgives much. It does not forgive the fourth hour.`, d:{standing:+1, energy:-10, jet:+4}, next:"confdinner" } },
+    { label:`A film, a small wine, and the long letter home you keep not writing.`,
+      out:{ text:`Two glasses in, you write it: four paragraphs, no lawyering, one joke that will land and one sentence you mean completely. It reads, on landing, like someone you used to be and intend to be again, starting Friday at 19:00. Send it anyway. Send it especially.`, d:{home:+7, energy:-2, jet:+3}, next:"confdinner" } },
+  ]);
+},
+
+/* ---- Wednesday evening: the conference dinner ---- */
+confdinner(){
+  clear();
+  stampLine("WEDNESDAY · LOCAL 20:00 · BODY 12:40 · THE CONFERENCE DINNER");
+  narr("The conference dinner, London edition: four hundred lawyers, one room, a seating plan of geopolitical delicacy. You are next to the general counsel of a shipping group \u2014 a stroke of luck or of the organisers, who know things. Danger, however, wears a lanyard: your body believes it is lunchtime. You could, biologically, go until three. That is precisely the trap: the keynote is at 09:10, which your body has pencilled in as one in the morning.");
+  choices([
+    { label:`Leave at 22:30, while the body still thinks it\u2019s afternoon. Exit through the lobby, not past the bar.`,
+      out:{ text:`You leave with the shipping GC\u2019s card, a dinner\u2019s worth of goodwill, and the reputation of a person with somewhere important to be \u2014 which, in this trade, is its own black tie. The bar calls after you once, then forgives you. Tomorrow will not need forgiving.`, d:{standing:+2, jet:+1}, next:"keynote" } },
+    { label:`Work the table. The GC is here, the stories are flowing, and lunchtime-you can go all night.`,
+      tag:"clients", dc:12,
+      success:{ text:`By midnight the shipping GC has told you about the arbitration her board does not know it needs yet, and you have told her exactly one war story, correctly chosen. \u201cCall me Monday,\u201d she says, and means a Monday that exists. The body will present the bill at 09:10. It will nearly be worth it.`, d:{standing:+7, jet:+3}, f:"lateLondon", next:"keynote" },
+      fail:{ text:`At 23:10 a partner from another firm joins the table and describes his platform as \u201cinternational, full service and fully integrated\u201d for fifty unbroken minutes. You nod. The shipping GC escapes at the dessert; you do not. Somewhere, a CONFERENCE KIT veteran shivers without knowing why.`, d:{standing:+1, energy:-6, jet:+3}, f:"lateLondon", next:"keynote" } },
+    { label:`Step out at 21:30 \u2014 it\u2019s bedtime at home, and the terrace has reception.`,
+      out:{ text:`Nine minutes on the terrace: one homework crisis resolved, one \u201cgood luck tomorrow\u201d delivered in exactly the voice that makes luck unnecessary. You return for the cheese course having missed, reportedly, an excellent dessert and nothing else of consequence.`, d:{home:+6, jet:+1}, next:"keynote" } },
+  ]);
+},
+
+/* ---- Thursday morning: mission two ---- */
+keynote(){
+  clear();
+  stampLine("THURSDAY · LOCAL 09:10 · BODY 01:10 · MISSION TWO: THE KEYNOTE");
+  narr("You are about to deliver a keynote at ten past one in the morning, body time. The body has filed a dissent. The chair introduces you as \u201ctireless\u201d, which at this hour is either a compliment or a diagnosis." + (S.flags.lateLondon ? " Last night\u2019s table, it turns out, had a corkage fee: it is being charged now, at the lectern. (DC +2.)" : " Last night\u2019s discipline pays its first dividend: the lectern feels merely early, not hostile."));
+  choices([
+    { label:`The argument, cold: three propositions, no slides after the first.`,
+      tag:"craft", dc:(S.flags.lateLondon?14:12),
+      success:{ text:`The room \u2014 a jury of four hundred professionals who have heard everything \u2014 goes quiet at proposition two and stays quiet, which from this audience is a standing ovation with better manners. Two GCs photograph the one slide. Mission two, delivered at one in the morning, body time. The body, impressed despite itself, adjourns its dissent.`, d:{standing:+8}, f:"m", next:"hop" },
+      fail:{ text:`Proposition three is not there. You wrote it somewhere over an ocean \u2014 or dreamed you did; at this altitude of fatigue the file system no longer distinguishes. You bridge with an anecdote that lands, and close early to applause that is polite in the way settlements are confidential. The keynote survives. \u201cSurvives\u201d is not the verb you flew here for.`, d:{standing:+2, energy:-6}, next:"hop" } },
+    { label:`Convert it: ten minutes of thesis, then open the floor and conduct.`,
+      tag:"people", dc:(S.flags.lateLondon?13:11),
+      success:{ text:`The gamble: at this hour the room is smarter than you are, so you deputise it. The questions arrive sharp, you referee with the last of the body\u2019s borrowed lunchtime alertness, and the session is later described as \u201cthe only panel that was actually a conversation\u201d. Mission two, delivered by four hundred co-authors.`, d:{standing:+7}, f:"m", next:"hop" },
+      fail:{ text:`The floor, opened, is seized by the fully integrated man from last night, who has a question in four parts, none of them questions. By part three the session is his. You reclaim the last five minutes like a delayed aircraft: too late, apologising, still boarding.`, d:{standing:+2, energy:-5}, next:"hop" } },
+    { label:`Read it. Word for word. Dignity in, fireworks out.`,
+      out:{ text:`Nobody remembers read keynotes. Nobody punishes them either. At one in the morning, body time, par is a score \u2014 and the text, written by Monday-you at altitude, is better than Thursday-you deserves. You thank Monday-you from the lectern, silently, like a partner crediting an associate.`, d:{standing:+3}, next:"hop" } },
+  ]);
+},
+
+/* ---- Thursday afternoon: the hop ---- */
+hop(){
+  clear();
+  stampLine("THURSDAY · LOCAL 13:05 · THE HOP · LHR \u2192 ZRH");
+  narr("The 13:05 to Zurich is overbooked, and the gate agent announces this with the serenity of a person offering vouchers for other people\u2019s afternoons. One flight, ninety minutes, one time zone \u2014 the smallest leg of the week, and therefore, by the iron law of travel, the one most likely to try something.");
+  choices([
+    { label:`Hold the seat. Politely, immovably, with status and a smile.`,
+      tag:"harmony", dc:11,
+      success:{ text:`The agent\u2019s eyes flick to the screen, then to you, and the system does what systems do for the politely immovable: it finds a seat that was always there. 3A, again. You board with your afternoon intact and your self-respect only lightly dented by how much the smile was doing.`, d:{standing:+2, energy:+2}, next:"chairman" },
+      fail:{ text:`You board \u2014 in 31E, between two consultants comparing frameworks across you for ninety minutes. By Zurich you know both frameworks. Neither survives contact with the other, or with you. The middle seat is the great leveller: no status, no framework, only elbows.`, d:{energy:-5}, next:"chairman" } },
+    { label:`Take the voucher and the 15:05. Two hours in a lounge is the quietest office you own.`,
+      out:{ text:`The lounge delivers the week\u2019s most undervalued luxury: a chair nobody wants anything from. At 17:30 \u2014 kitchen time at home \u2014 you video-call into the Friday logistics summit: menu confirmed, table confirmed, \u201cdon\u2019t be late\u201d confirmed, twice. You land at 17:45 with a voucher you will never redeem and a promise you will.`, d:{home:+7, energy:+4}, next:"chairman" } },
+    { label:`Seat or no seat \u2014 the Zurich numbers need one more pass. Work the gate, board last.`,
+      tag:"craft", dc:11,
+      success:{ text:`Forty minutes at the gate, laptop on knees, and the Zurich deck loses its last soft spot: the sensitivity table now answers the question the CFO will actually ask. You board last, work done, past the consultants, who have begun to merge.`, d:{standing:+4, energy:-3}, f:"gatework", next:"chairman" },
+      fail:{ text:`The gate wifi expires mid-save, the boarding call eats the final table, and you spend the flight reconstructing from memory what the cloud insists never existed. The deck lands whole. Your faith in the phrase \u201cauto-sync\u201d does not.`, d:{energy:-6}, next:"chairman" } },
+  ]);
+},
+
+/* ---- Thursday evening: the chairman's table ---- */
+chairman(){
+  clear();
+  stampLine("THURSDAY · LOCAL 19:30 · BODY 10:30 · THE CHAIRMAN\u2019S TABLE");
+  narr("Zurich. The chairman of tomorrow\u2019s board hosts the traditional eve-of-meeting dinner and orders a Burgundy with a birth year and expectations. Your body clock reads half past ten in the morning \u2014 the only hour at which Burgundy is a confession. Third city, third table, third test: the week keeps setting the same exam and changing the invigilator.");
+  choices([
+    { label:`Match him. The relationship is older than the agenda.`,
+      tag:"clients", dc:12,
+      success:{ text:`Two glasses, one of them sincere. The chairman, mellowed, tells you what tomorrow\u2019s difficult board member will say \u2014 verbatim, as it turns out. Intelligence of this grade has a unit price, and tonight it is measured in Burgundy and tomorrow\u2019s margin.`, d:{standing:+6, jet:+2, energy:-4}, f:"intel", next:"board2" },
+      fail:{ text:`The second bottle appears \u201cfor the table\u201d, the table being two people. At 23:40 the chairman is quoting Churchill and you are agreeing with both of them. Tomorrow\u2019s nine o\u2019clock has been mortgaged. The rate, you will discover, is variable.`, d:{standing:+3, jet:+3, energy:-8}, next:"board2" } },
+    { label:`Decline the wine \u2014 openly, with the body clock as counsel of record.`,
+      tag:"harmony", dc:11,
+      success:{ text:`\u201cMy body is convinced it\u2019s half past ten in the morning,\u201d you say, \u201cand I try not to drink before lunch.\u201d The chairman laughs, pours you one \u201cfor the toast\u201d, and respects you slightly more than if you had matched him. One glass is a toast. One is survivable.`, d:{standing:+4}, next:"board2" },
+      fail:{ text:`The honesty lands as performance \u2014 Zurich can tell a boundary from a brand, and for one long moment it audits yours. The chairman switches to small talk, which from him is a demotion. The evening ends early and correctly, like a hearing adjourned for reasons nobody minutes.`, d:{standing:-2, energy:+4}, next:"board2" } },
+    { label:`Excuse yourself at 21:45. The board papers want one last read and the body wants the truth.`,
+      out:{ text:`The chairman, a professional of the old school, approves of early nights the way he approves of clean audits: silently, and in your file. The papers get their read, the body gets its ruling, and the hotel bed at 22:30 local is the closest thing to home since Monday. Which is a thought you take care not to finish.`, d:{energy:+7, standing:-1}, next:"board2" } },
+  ]);
+},
+
+/* ---- Friday morning: mission three ---- */
+board2(){
+  clear();
+  stampLine("FRIDAY · LOCAL 08:30 · BODY 03:10 · MISSION THREE: THE ZURICH BOARD");
+  narr("The last board of the week meets at half past three in the morning, somewhere inside you. Outside you it is a bright Zurich Friday, the coffee is correct, and fourteen floors below, the lake performs stability. Ninety minutes, one recommendation, and then \u2014 the airport, the 13:10, the table at 19:00. Everything in the week now stands behind this door, queuing.");
+  choices([
+    { label:`The recommendation first, in the first minute. Boards forgive length, never suspense.`,
+      tag:"clients", dc:13,
+      success:{ text:`\u201cOur recommendation is to settle, at these numbers, before Easter. The next eighty minutes explain why.\u201d The board, given the destination, enjoys the journey. ${S.flags.intel?"The difficult member says exactly what the chairman predicted \u2014 word for word \u2014 and you answer it with the calm of a man reading from tomorrow\u2019s minutes.":"The difficult member attacks, unannounced \u2014 and you answer on the merits alone, which takes three moves instead of one and lands all three."} Mission three, delivered.`, d:{standing:+8}, f:"m", next:"lastleg" },
+      fail:{ text:`The recommendation lands; the difficult member attacks the assumptions beneath it, mining downward with the patience of a man who brought sandwiches; and at body-time four a.m. your defence of discount rates develops a brief, audible vacancy. The chairman rescues the motion. It passes, amended. \u201cAmended\u201d is Latin for \u2018we will discuss this again\u2019.`, d:{standing:+3, energy:-7}, next:"lastleg" } },
+    { label:S.flags.icework?(S.flags.gatework?`Run the deck \u2014 built over Iceland, finished at the gate.`:`Run the deck \u2014 the one built over Iceland on the redeye.`):(S.flags.gatework?`Run the deck \u2014 finished at gate 23, laptop on knees.`:`Run the numbers cold. The deck is younger than you\u2019d like; the numbers are not.`),
+      tag:"craft", dc:13,
+      success:{ text:`The sensitivity table ${S.flags.gatework?"\u2014 gate 23, Thursday, laptop on knees \u2014":S.flags.icework?"\u2014 drafted over Iceland at 04:00 body time \u2014":"\u2014 rebuilt this morning between espresso one and espresso two \u2014"} answers the CFO\u2019s exact question before he finishes asking it. There is a particular silence that follows a number nobody can argue with. You stand in it for three seconds, like sunlight. Mission three, delivered.`, d:{standing:+7}, f:"m", next:"lastleg" },
+      fail:{ text:`Slide nine still carries ${S.flags.icework?"the Icelandic draft\u2019s optimism":"last night\u2019s optimism"}; the CFO finds the seam and works it. The recommendation holds, roughened. On the way out the chairman murmurs, \u201cnext time, fly in Wednesday\u201d \u2014 kindly, and with no idea what the sentence costs.`, d:{standing:+2, energy:-6}, next:"lastleg" } },
+    { label:`Let their own team present the numbers; you hold the strategy and the room.`,
+      tag:"people", dc:12,
+      success:{ text:`Their head of litigation presents your numbers as house numbers, which is what numbers want to be. You speak four times, forty seconds each, each one a hinge. The board votes with its own voice and your map. Mission three, delivered \u2014 invisibly, which is the expensive way, and the one that lasts.`, d:{standing:+6}, f:"m", next:"lastleg" },
+      fail:{ text:`Their presenter, nervous, defends a number you would have conceded and concedes the one you would have defended. You repair in real time, visibly, which undoes the point of the architecture. The vote carries. The elegance does not.`, d:{standing:+3, energy:-5}, next:"lastleg" } },
+  ]);
+},
+
+/* ---- Friday afternoon: the last leg ---- */
+lastleg(){
+  clear();
+  stampLine("FRIDAY · LOCAL 13:10 · BODY: IRRELEVANT · THE LAST LEG");
+  const dc = 13 - (S.home>=65?2:S.home>=50?1:0) + (S.jet>=6?1:0);
+  narr("The 13:10 home is cancelled \u2014 French airspace, a strike with settled case law. The 15:40 is \u201cexpected to operate\u201d, a phrase doing the heaviest lifting in European aviation. The table is at 19:00. It has been at 19:00 since the apology last quarter, and it does not recognise force majeure.");
+  narr("Across the lounge, improbably, sits the opposing lead counsel in the Harbour arbitration, two glasses already poured, mouthing a single word: \u201chypothetically\u201d.");
+  choices([
+    { label:`The 15:40, and faith. Gate-side, first row, ready to run.`,
+      tag:"harmony", dc:dc,
+      success:{ text:`The 15:40 operates. It even boards. Wheels down 17:55, taxi at 18:07, traffic merciful, door at 18:52 \u2014 eight minutes early, which after four airports and ten time zones counts as a love letter. The table is exactly where it said it would be. So, for once entirely, are you.`, d:{home:+10}, f:"made", next:"finale" },
+      fail:{ text:`The 15:40 \u201coperates\u201d at 18:20. You land at 20:35 and stand in an arrivals hall holding flowers from a vending machine, which is a sentence you never expected to be true of you. The table was kept until 20:00, then released with dignity. Nobody is angry. By now you know exactly how much that costs.`, d:{home:-8, energy:-5}, f:"vending", next:"finale" } },
+    { label:`Abandon airports: the 14:02 train to Basel, the connection north, arrival 18:40. Slower. Certain. Mostly.`,
+      tag:"craft", dc:12,
+      success:{ text:`The train does what trains do: it leaves, it arrives, it apologises for nothing. Five hours of window, one of them spent writing the toast you will give at 19:00 \u2014 short, true, and overdue by a quarter. Door at 18:44. The flowers come from an actual florist. Standards survive.`, d:{home:+9, energy:+2}, f:"made", next:"finale" },
+      fail:{ text:`The connection in Basel exists in the timetable and nowhere else. You stand on platform 7 watching your margin leave on platform 9, and arrive at 20:10 \u2014 near enough to see the table through the window, far enough that it is being cleared. The last leg of a long week is always the one with teeth.`, d:{home:-7, energy:-6}, next:"finale" } },
+    { label:`Cross the lounge. \u201cHypothetically\u201d has a word-count worth hearing.`,
+      out:{ text:`Two glasses, forty minutes, and a hypothesis with numbers in it: Harbour settles within a corridor your client will take. You call home at 15:10 \u2014 before deciding, which is the entire trick \u2014 and the voice at the other end says, \u201cTake the meeting. Move the table to nine. You\u2019ll be insufferable otherwise.\u201d The table, this once, moves. Some settlements are reached in lounges. The important ones are reached by phone, first.`, d:{standing:+8, home:+3}, f:"detour", next:"finale" } },
+  ]);
+},
+};
+
+/* ================= endings ================= */
+function finale(){
+  const m = S.flags.m||0;
+  if(S.flags.detour) return ending("detour");
+  if(S.flags.made && m>=2 && S.home>=55) return ending("homeby7");
+  if(S.flags.made) return ending("madeit");
+  if(m>=2) return ending("lounge");
+  return ending("emptyseat");
+}
+
+function ending(kind){
+  const m = S.flags.m||0;
+  const E = {
+    homeby7:{ gold:true, seal:"HOME BY SEVEN",
+      text:`Three cities, ${m===3?"three missions, all of them landed":"two missions landed and one honourably survived"}, ten time zones \u2014 and at 19:00 on Friday you are sitting at the right table, in the right city, with the right person, awake. In this profession, that is not an evening. That is a grand slam.<br><br>Over dessert your phone lights up once \u2014 the Singapore director, the shipping GC, or Zurich; it does not matter \u2014 and you turn it face-down without looking, which is the most senior thing you have done all week.<br><br><b>ENDING: HOME BY SEVEN \u2014 the rarest routing in the network. Frequent flyers of this line keep both ledgers in the black.</b>` },
+    madeit:{ gold:true, seal:"THE TABLE",
+      text:`The week abroad was ${m>=1?"uneven \u2014 some missions landed, some merely survived":"a bruising one \u2014 the missions will need repair on Monday"}. But at 19:00 on Friday you are at the table, and the person across it, who has read this week in your face since Monday, says: \u201cTell me the bits with food in them.\u201d<br><br>You do. ${S.flags.forklift?"The forklift story lands here, too \u2014 better, in fact, at this table.":"The one about the consultants in 31E, merging, finally gets the laugh it deserved."} Monday can have the rest.<br><br><b>ENDING: THE TABLE \u2014 the week was imperfect everywhere except the only place that was non-negotiable.</b>` },
+    lounge:{ gold:true, seal:"THE LEGEND OF THE LOUNGE",
+      text:`By every metric the firm keeps, the week was a triumph: ${m} missions landed, a board quoting your numbers, four hundred lawyers quoting your keynote. The metric at the table seats two and keeps different books.<br><br>${S.flags.vending?"You land at 20:35. The flowers are from a vending machine.":"You arrive at 20:10, close enough to watch the table being cleared through the window; the Basel kiosk roses do their loyal, insufficient best."} Nobody is angry \u2014 and by now you know precisely what that costs, and roughly how long it takes to repay: longer than a quarter, shorter than forever, at an interest rate set by how you behave on the ground, not in the air.<br><br>Next Friday\u2019s table is already booked. By you. For 18:00, with a margin.<br><br><b>ENDING: THE LEGEND OF THE LOUNGE \u2014 brilliant at altitude, late at sea level. The repayment schedule starts Monday.</b>` },
+    emptyseat:{ gold:false, seal:"THE EMPTY SEAT",
+      text:`The strike took the itinerary, the week took the missions, and the table \u2014 kept until 20:00 \u2014 was released with a dignity you will think about for longer than any board vote. Somewhere over the Atlantic the week\u2019s ledger finally consolidates, and the bottom line is a seat, empty, at 19:00.<br><br>Nobody is angry. That is the worst available outcome${S.flags.vending?", and you have now read that sentence twice in one lifetime":", delivered in the quietest available voice"}.<br><br>You repair things the way they are actually repaired: slowly, locally, in person, with the phone face-down. The itinerary for next quarter is printed already. You unprint it.<br><br><b>ENDING: THE EMPTY SEAT \u2014 the week won everywhere it didn\u2019t matter. Rebook everything.</b>` },
+    detour:{ gold:true, seal:"THE DETOUR",
+      text:`The Harbour arbitration \u2014 two years, eleven procedural orders, one injunction served at lunchtime nine zones away \u2014 begins to end in an airport lounge, hypothetically, over two glasses nobody finishes. The term sheet is on a napkin. The napkin will be exhibit one at the celebration dinner.${S.flags.people?" Wren, briefed from the lounge at 15:40, has it typed, numbered and circulated before you cross the border \u2014 the week\u2019s second-best delegation decision, after Tuesday, 03:40.":""}<br><br>You reach the table at 21:00, moved once, by permission, with the only sentence that can move it: asked first. The toast you give is about neither the settlement nor the week. It is about the phone call at 15:10.<br><br><b>ENDING: THE DETOUR \u2014 the week\u2019s biggest win was never on the itinerary, and the table moved because you asked it to, not because the airline did.</b>` },
+    grounded:{ gold:false, seal:"GROUNDED",
+      text:`It ends in the Zurich lounge, or possibly the London one \u2014 the lounges have begun to merge \u2014 when a doctor with excellent German and no patience for heroics uses the phrase \u201cnot fit to fly\u201d, and means you.<br><br>The firm reroutes the week around your absence with insulting ease. The table at 19:00 is kept \u2014 by the other chair, who flies to YOU, which is how you learn what the week was actually for. Three days of hotel rest, one confiscated laptop, and a ruling from the only tribunal with real jurisdiction: the body, sitting en banc.<br><br><b>ENDING: GROUNDED \u2014 energy reached zero at altitude. The body\u2019s dissent became the judgment.</b>` },
+  }[kind];
+
+  S.over = true;
+  clear();
+  stampLine("ITINERARY · FINAL ENTRY");
+  app.appendChild(el(`<div class="ending-seal ${E.gold?"gold":""}"><span>${E.seal}</span></div>`));
+  narr(E.text);
+  tx(`TRAVEL AUDIT
+Miles flown · 11,284 · Time zones crossed · 10 · Airports · 4 (one of them twice)
+Hours slept, local · ${Math.max(9, 22-S.jet)} · Hours slept, body time · inconclusive
+Strategic espressos · 2 · Burgundy, survived · 1 · Vouchers redeemed · 0
+Missions · ${m} of 3 · The table at 19:00 · ${S.flags.detour?"moved once, by permission":S.flags.made?"kept":"missed"}`);
+  const cls = S.cls ? S.cls.nm : "PARTNER";
+  app.appendChild(el(`<p class="tx" style="text-align:center; color:var(--ink-soft);">CLOSING LEDGER · ${cls} · STANDING ${Math.max(0,S.standing)} · ENERGY ${Math.max(0,S.energy)} · HOME ${Math.max(0,S.home)} · BODY CLOCK · unresolved</p>`));
+  const r = el(`<button class="restart">NEW ITINERARY (PLAY AGAIN)</button>`);
+  r.addEventListener("click", ()=>{ S = freshState(); go("start"); });
+  app.appendChild(r);
+}
+
+/* ================= flow ================= */
+function go(id){
+  if(S.over) return;
+  if(id==="finale"){ finale(); return; }
+  SCENES[id]();
+}
+
+/* boot */
+S = freshState();
+go("start");
+</script>
+</body>
+</html>
